@@ -110,11 +110,17 @@
         /* Sleeps List */
         .sleeps-list { list-style: none; padding: 0; margin: 0; }
         .sleeps-list li {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
         }
+        .sleep-list li:last-child { border-bottom: none; }
+        .event-name { font-weight: 600; color: #333; }
+        .sleep-number { font-weight: bold; color: #E65100; font-size: 1.4rem; background: #fff3e0; padding: 2px 8px; border-radius: 8px; }
         .sleep-number { font-weight: bold; color: #E65100; font-size: 1.4rem; }
 
         /* --- IPAD & DESKTOP (Grid Overlay) --- */
@@ -170,9 +176,8 @@
 
         <div class="module bottom-left" id="mod-sleeps">
             <div class="module-title">SLEEPS UNTIL...</div>
-            <ul class="sleeps-list">
-                <li><span class="sleep-number">4</span> Disney</li>
-                <li><span class="sleep-number">2</span> Kelli arrives</li>
+            <ul class="sleeps-list" id="sleeps-list-container">
+                <li><span class="event-name">Loading timer...</span></li>
             </ul>
         </div>
 
@@ -349,6 +354,64 @@
 // Initial load and interval
 loadData();
 setInterval(loadData, 60000);
+
+        // --- 3. COUNTDOWN TIMERS FETCHING ---
+        // REPLACE this with the ID of your NEW Sleeps Spreadsheet
+        const SLEEPS_SHEET_ID = "1hTgmLdIhX1tVZbI2YB1tExCTreIAgHSqN8i31zURNkg";
+        const SLEEPS_URL = `https://docs.google.com/spreadsheets/d/${SLEEPS_SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
+
+        function calculateSleeps(targetDateStr) {
+            // Grab today's date and set the clock to exactly midnight
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Grab the target date and set the clock to midnight
+            const target = new Date(targetDateStr);
+            target.setHours(0, 0, 0, 0);
+
+            // Calculate the difference in time, then convert to days
+            const diffTime = target - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays;
+        }
+
+        function loadSleeps() {
+            fetch(SLEEPS_URL)
+                .then(res => res.text())
+                .then(text => {
+                    const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
+                    const table = JSON.parse(jsonText).table;
+                    const rows = table.rows;
+
+                    const container = document.getElementById('sleeps-list-container');
+                    container.innerHTML = ""; // Clear the loading text
+
+                    // Loop through every row in the spreadsheet
+                    rows.forEach(row => {
+                        // Assuming Col A is Event (index 0) and Col B is Date (index 1)
+                        const eventName = row.c[0] ? row.c[0].v : "";
+                        const eventDateStr = row.c[1] ? row.c[1].f || row.c[1].v : null;
+
+                        if (eventName && eventDateStr) {
+                            const sleeps = calculateSleeps(eventDateStr);
+                            
+                            // Only show events that are today or in the future
+                            if (sleeps >= 0) {
+                                const li = document.createElement('li');
+                                li.innerHTML = `<span class="event-name">${eventName}</span> 
+                                                <span class="sleep-number">${sleeps}</span>`;
+                                container.appendChild(li);
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.error("Error fetching sleeps data:", err));
+        }
+
+        // Initial load and interval (updates once an hour to save resources, since sleeps only change at midnight)
+        loadSleeps();
+        setInterval(loadSleeps, 3600000);
         
         // Just a quick visual test for the buttons
         document.getElementById('btn-carter').addEventListener('click', function() {
