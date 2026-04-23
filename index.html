@@ -389,19 +389,24 @@ setInterval(loadData, 60000);
 
                     // Loop through every row in the spreadsheet
                     rows.forEach(row => {
-                        // Assuming Col A is Event (index 0) and Col B is Date (index 1)
+                        // Col A is Event (index 0), Col B is Date (index 1)
                         const eventName = row.c[0] ? row.c[0].v : "";
-                        const eventDateStr = row.c[1] ? row.c[1].f || row.c[1].v : null;
+                        const rawDateValue = row.c[1] ? row.c[1].v : null;
 
-                        if (eventName && eventDateStr) {
-                            const sleeps = calculateSleeps(eventDateStr);
+                        if (eventName && rawDateValue) {
+                            // Use our robust sheet date parser!
+                            const parsedDate = parseSheetDate(rawDateValue); 
                             
-                            // Only show events that are today or in the future
-                            if (sleeps >= 0) {
-                                const li = document.createElement('li');
-                                li.innerHTML = `<span class="event-name">${eventName}</span> 
-                                                <span class="sleep-number">${sleeps}</span>`;
-                                container.appendChild(li);
+                            if (parsedDate) {
+                                const sleeps = calculateSleeps(parsedDate);
+                                
+                                // Only show events that are today or in the future
+                                if (sleeps >= 0) {
+                                    const li = document.createElement('li');
+                                    li.innerHTML = `<span class="event-name">${eventName}</span> 
+                                                    <span class="sleep-number">${sleeps}</span>`;
+                                    container.appendChild(li);
+                                }
                             }
                         }
                     });
