@@ -225,68 +225,80 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             return (R * c).toFixed(1); 
     }
-        async function updateDashboard() {
-            try {
-                const response = await fetch(SHEET_URL);
-                const data = await response.text();
-                
-                // Parse the CSV (assuming row 1 is headers, row 2 is data)
-                // Columns: [Mode, Flight/Location Data, Distance]
-                const rows = data.split('\n');
-                const currentData = rows[1].split(','); 
-                
-                // Clean up quotes from the CSV
-                const mode = currentData[0].replace(/"/g, '').toLowerCase().trim();
-                const locationData = currentData[1].replace(/"/g, '').trim();
-                const distance = currentData[2] ? currentData[2].replace(/"/g, '').trim() : "Unknown";
+        function loadData() {
+    fetch(URL)
+        .then(res => res.text())
+        .then(text => {
+            const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
+            const table = JSON.parse(jsonText).table;
+            const headers = table.cols.map(c => c.label);
+            const values = table.rows[0].c;
 
-                updateUI(mode, locationData, distance);
+            const row = {};
+            headers.forEach((h, i) => row[h] = values[i]?.v || "");
 
-            } catch (error) {
-                console.error("Error fetching sheet data:", error);
-                document.getElementById('message-text').innerText = "Trying to reach Dad's signal...";
-            }
-        }
-
-        function updateUI(mode, locationData, distance) {
+            // Target the new Dashboard UI elements
             const mapContainer = document.getElementById('map-container');
             const sectorStatus = document.querySelector('#mod-sector .status-text');
             const sectorSub = document.querySelector('#mod-sector .sub-text');
 
-            if (mode === "home") {
-                // Hide Map, show 'Home' mode
-                mapContainer.style.display = 'none';
-                sectorStatus.innerText = "AT HOME";
-                sectorSub.innerText = "Mission Complete";
-                sectorStatus.style.color = "#4CAF50"; // Green text
-                
-            } else if (mode === "flying") {
-                // Show Map, update for Flying
+            // Clear the map container for a fresh draw
+            mapContainer.innerHTML = "";
+
+            // -------- FLYING MODE --------
+            if (row.mode === "FLYING" && row.flight_id) {
                 mapContainer.style.display = 'flex';
                 sectorStatus.innerText = "FLYING";
-                sectorSub.innerText = distance + " Miles from Home";
-                sectorStatus.style.color = "#005A9C"; // Blue text
-                
-                // [PASTE YOUR ORIGINAL MAP GENERATION CODE HERE]
-                // Example: updateMapToFlight(locationData);
-                mapContainer.innerHTML = `<div>Tracking Flight: ${locationData}</div>`; 
+                sectorSub.innerText = "Tracking " + row.flight_id;
+                sectorStatus.style.color = "#005A9C";
 
-            } else if (mode === "ground") {
-                // Show Map, update for Ground/Layover
+                const iframe = document.createElement("iframe");
+                iframe.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`;
+                iframe.style.width = "100%";
+                iframe.style.height = "100%";
+                iframe.style.border = "none";
+                mapContainer.appendChild(iframe);
+            } 
+            // -------- GROUND MODE --------
+            else if (row.mode === "GROUND" || row.mode === "Landed") {
                 mapContainer.style.display = 'flex';
-                sectorStatus.innerText = "LANDED";
-                sectorSub.innerText = "In " + locationData;
-                sectorStatus.style.color = "#E65100"; // Orange text
-                
-                // [PASTE YOUR ORIGINAL MAP GENERATION CODE HERE]
-                // Example: updateMapToCoordinates(locationData);
-                mapContainer.innerHTML = `<div>Dad is in: ${locationData}</div>`;
-            }
-        }
+                const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
 
-        // Run the update immediately, then check every 5 minutes (300000 ms)
-        updateDashboard();
-        setInterval(updateDashboard, 300000);
+                sectorStatus.innerText = "LANDED";
+                sectorSub.innerText = distance + " Miles from Home";
+                sectorStatus.style.color = "#E65100";
+
+                const mapDiv = document.createElement("div");
+                mapDiv.id = "map";
+                mapDiv.style.width = "100%";
+                mapDiv.style.height = "100%";
+                mapContainer.appendChild(mapDiv);
+
+                const map = L.map('map', {zoomControl: false, attributionControl: false});
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
+
+                L.marker([row.dad_lat, row.dad_long]).addTo(map).bindPopup("Dad").openPopup();
+                L.marker([HOME_LAT, HOME_LONG]).addTo(map).bindPopup("Home").openPopup();
+                L.polyline([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]], {color: 'blue'}).addTo(map);
+
+                const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
+                const usBounds = L.latLngBounds([[24.396308, -125.0], [49.384358, -66.93457]]);
+                map.fitBounds(dadHomeBounds.extend(usBounds), {padding: [50,50]});
+            }
+            // -------- HOME MODE --------
+            else if (row.mode === "HOME") {
+                mapContainer.style.display = 'none'; // Hides the center map
+                sectorStatus.innerText = "AT HOME";
+                sectorSub.innerText = "Mission Complete";
+                sectorStatus.style.color = "#4CAF50";
+            }
+        })
+        .catch(err => console.error("Error fetching map data:", err));
+}
+
+// Initial load and interval
+loadData();
+setInterval(loadData, 60000);
         
         // Just a quick visual test for the buttons
         document.getElementById('btn-carter').addEventListener('click', function() {
