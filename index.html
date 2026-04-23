@@ -480,10 +480,19 @@ setInterval(loadData, 60000);
                 .catch(err => console.error("Error fetching message:", err));
         }
 
-        // Send the email ping silently in the background
+        // --- THE NTFY PUSH NOTIFICATION ---
+        // Replace this with the exact secret topic you typed into the ntfy app
+        const NTFY_TOPIC = "axley_dashboard_alerts_26";
+
         function notifyDad(sonName) {
-            // mode: 'no-cors' prevents the browser from blocking the background request
-            fetch(`${WEB_APP_URL}?action=notify&son=${sonName}`, { mode: 'no-cors' });
+            fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+                method: 'POST',
+                body: `${sonName} just read your message on the dashboard!`,
+                headers: {
+                    'Title': 'Dad Tracker Alert',
+                    'Tags': 'airplane' // Adds a little airplane emoji to the alert!
+                }
+            }).catch(err => console.error("Error sending notification:", err));
         }
 
         // Button Click Listeners
