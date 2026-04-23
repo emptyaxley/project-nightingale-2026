@@ -376,7 +376,7 @@ setInterval(loadData, 60000);
             return diffDays;
         }
 
-        function loadSleeps() {
+       function loadSleeps() {
             fetch(SLEEPS_URL)
                 .then(res => res.text())
                 .then(text => {
@@ -391,13 +391,30 @@ setInterval(loadData, 60000);
                     rows.forEach(row => {
                         // Col A is Event (index 0), Col B is Date (index 1)
                         const eventName = row.c[0] ? row.c[0].v : "";
-                        const rawDateValue = row.c[1] ? row.c[1].v : null;
+                        // Try to get the nicely formatted string first, then fallback to raw value
+                        const dateValue = row.c[1] ? (row.c[1].f || row.c[1].v) : null;
 
-                        if (eventName && rawDateValue) {
-                            // Use our robust sheet date parser!
-                            const parsedDate = parseSheetDate(rawDateValue); 
+                        if (eventName && dateValue) {
+                            let parsedDate = null;
                             
-                            if (parsedDate) {
+                            // 1. Handle Google's weird internal format: "Date(2026,4,15)"
+                            if (typeof dateValue === 'string' && dateValue.startsWith('Date')) {
+                                let parts = dateValue.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
+                                if (parts) {
+                                    parsedDate = new Date(parts[1], parts[2], parts[3]);
+                                }
+                            } 
+                            // 2. Handle serial dates (numbers)
+                            else if (typeof dateValue === 'number') {
+                                parsedDate = convertSerialDate(dateValue);
+                            } 
+                            // 3. Handle normal strings: "5/15/2026"
+                            else {
+                                parsedDate = new Date(dateValue);
+                            }
+                            
+                            // If we successfully found a date, run the math
+                            if (parsedDate && !isNaN(parsedDate)) {
                                 const sleeps = calculateSleeps(parsedDate);
                                 
                                 // Only show events that are today or in the future
@@ -410,10 +427,18 @@ setInterval(loadData, 60000);
                             }
                         }
                     });
+                    
+                    // If the list is totally empty after checking everything
+                    if (container.innerHTML === "") {
+                        container.innerHTML = '<li><span class="event-name">No upcoming events</span></li>';
+                    }
                 })
-                .catch(err => console.error("Error fetching sleeps data:", err));
+                .catch(err => {
+                    console.error("Error fetching sleeps data:", err);
+                    document.getElementById('sleeps-list-container').innerHTML = 
+                        '<li><span class="event-name" style="color:red; font-size:0.9rem;">Connection error. Is the sheet Published to the Web?</span></li>';
+                });
         }
-
         // Initial load and interval (updates once an hour to save resources, since sleeps only change at midnight)
         loadSleeps();
         setInterval(loadSleeps, 3600000);
