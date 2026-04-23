@@ -153,9 +153,10 @@
         </div>
 
         <div class="module top-left" id="mod-sector">
-            <div class="module-title">Dad's Sector Tracker</div>
-            <p class="status-text">FLYING</p>
-            <p class="sub-text">1,450 Miles from Home</p>
+            <div class="module-title">Dad's Status</div>
+            <p class="status-text">Locating Dad</p>
+            <p class="date-text" style="font-size: 0.85rem; color: #666; font-style: italic; margin: 5px 0;"></p>
+            <p class="sub-text">Loading...</p>
         </div>
 
         <div class="module top-right" id="mod-messages">
@@ -225,6 +226,46 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             return (R * c).toFixed(1); 
     }
+        // Convert Google Sheets serial date (e.g., 36525.8) to JS Date
+        function convertSerialDate(serial) {
+            const epoch = new Date(1899, 11, 30); 
+            return new Date(epoch.getTime() + serial * 24 * 60 * 60 * 1000);
+        }
+
+        // Parse Google Sheets date string
+        function parseSheetDate(sheetValue) {
+            if (!sheetValue) return null;
+            if (typeof sheetValue === "number") return convertSerialDate(sheetValue);
+            const [datePart, timePart] = sheetValue.split(" ");
+            if (!datePart || !timePart) return null;
+            const [month, day, year] = datePart.split("/").map(Number);
+            const [hours, minutes, seconds] = timePart.split(":").map(Number);
+            return new Date(year, month - 1, day, hours, minutes, seconds);
+        }
+
+        // Friendly updated date string
+        function formatUpdated(sheetValue) {
+            const d = parseSheetDate(sheetValue);
+            if (!d) return "N/A";
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            const updatedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+            if (updatedDate.getTime() === today.getTime()) {
+                const hours = d.getHours() % 12 || 12;
+                const minutes = d.getMinutes().toString().padStart(2, "0");
+                const ampm = d.getHours() >= 12 ? "PM" : "AM";
+                return `Today at ${hours}:${minutes} ${ampm}`;
+            } else if (updatedDate.getTime() === yesterday.getTime()) {
+                return "Yesterday";
+            } else {
+                const diffTime = today - updatedDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+            }
+        }
         function loadData() {
     fetch(SHEET_URL)
         .then(res => res.text())
@@ -237,20 +278,24 @@
             const row = {};
             headers.forEach((h, i) => row[h] = values[i]?.v || "");
 
-            // Target the new Dashboard UI elements
+           // Target the new Dashboard UI elements
             const mapContainer = document.getElementById('map-container');
             const sectorStatus = document.querySelector('#mod-sector .status-text');
+            const sectorDate = document.querySelector('#mod-sector .date-text');
             const sectorSub = document.querySelector('#mod-sector .sub-text');
 
             // Clear the map container for a fresh draw
             mapContainer.innerHTML = "";
+            
+            // Set the Updated Date (assuming column 1 is named "updated" in your sheet)
+            sectorDate.innerText = "Updated: " + formatUpdated(row.updated);
 
             // -------- FLYING MODE --------
             if (row.mode === "FLYING" && row.flight_id) {
                 mapContainer.style.display = 'flex';
-                sectorStatus.innerText = "FLYING";
-                sectorSub.innerText = "Tracking " + row.flight_id;
-                sectorStatus.style.color = "#005A9C";
+                sectorStatus.innerText = "In the Air";
+                sectorSub.innerText = "Flight: " + row.flight_id;
+                sectorStatus.style.color = "#000080"; // Navy Blue
 
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`;
@@ -264,9 +309,9 @@
                 mapContainer.style.display = 'flex';
                 const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
 
-                sectorStatus.innerText = "LANDED";
-                sectorSub.innerText = distance + " Miles from Home";
-                sectorStatus.style.color = "#E65100";
+                sectorStatus.innerText = "On the Ground";
+                sectorSub.innerText = distance + " miles from home";
+                sectorStatus.style.color = "#355E3B"; // Hunter Green
 
                 const mapDiv = document.createElement("div");
                 mapDiv.id = "map";
@@ -288,9 +333,9 @@
             // -------- HOME MODE --------
             else if (row.mode === "HOME") {
                 mapContainer.style.display = 'none'; // Hides the center map
-                sectorStatus.innerText = "AT HOME";
-                sectorSub.innerText = "Mission Complete";
-                sectorStatus.style.color = "#4CAF50";
+                sectorStatus.innerText = "Home";
+                sectorSub.innerText = ""; // Empty out the sub-text
+                sectorStatus.style.color = "#000000"; // Black
             }
         })
         .catch(err => console.error("Error fetching map data:", err));
