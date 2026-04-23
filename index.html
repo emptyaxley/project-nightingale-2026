@@ -304,13 +304,18 @@
                 iframe.style.border = "none";
                 mapContainer.appendChild(iframe);
             } 
-            // -------- GROUND MODE --------
+           // -------- GROUND MODE --------
             else if (row.mode === "GROUND" || row.mode === "Landed") {
                 mapContainer.style.display = 'flex';
                 const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
 
                 sectorStatus.innerText = "On the Ground";
-                sectorSub.innerText = distance + " miles from home";
+                
+                // --- THE NEW CITY/STATE UPDATE ---
+                // We use innerHTML here so we can add a line break (<br>) 
+                // and make the distance text slightly smaller so the city stands out.
+                sectorSub.innerHTML = `In ${row.city}, ${row.state}<br><span style="font-size: 0.9em; color: #888;">${distance} miles from home</span>`;
+                
                 sectorStatus.style.color = "#355E3B"; // Hunter Green
 
                 const mapDiv = document.createElement("div");
