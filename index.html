@@ -338,7 +338,7 @@
 
                 const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
                 const usBounds = L.latLngBounds([[24.396308, -125.0], [49.384358, -66.93457]]);
-                map.fitBounds(dadHomeBounds.extend(usBounds), {padding: [10,10]});
+                map.fitBounds(dadHomeBounds.extend(usBounds), {padding: [5,5]});
             }
             // -------- HOME MODE --------
             else if (row.mode === "HOME") {
@@ -443,16 +443,69 @@ setInterval(loadData, 60000);
         loadSleeps();
         setInterval(loadSleeps, 3600000);
         
-        // Just a quick visual test for the buttons
+        // --- 4. MESSAGE BOARD & NOTIFICATIONS ---
+        // 1. The Publish to Web CSV link for your new Messages Sheet
+        const MESSAGE_CSV_URL = `https://docs.google.com/spreadsheets/d/YOUR_MESSAGES_SHEET_ID_HERE/gviz/tq?tqx=out:csv&headers=0`;
+        
+        // 2. The Apps Script Web App URL you just generated
+        const WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+        function loadMessage() {
+            fetch(MESSAGE_CSV_URL)
+                .then(res => res.text())
+                .then(text => {
+                    // Clean up the CSV formatting
+                    const cleanMessage = text.replace(/^"|"$/g, '').trim();
+                    const msgElement = document.getElementById('message-text');
+                    const storedMessage = localStorage.getItem('dashboardMessage');
+
+                    // If the message has changed, update UI and reset buttons!
+                    if (cleanMessage !== storedMessage && cleanMessage !== "") {
+                        msgElement.innerText = cleanMessage;
+                        localStorage.setItem('dashboardMessage', cleanMessage);
+
+                        // Reset Carter's button
+                        const btnCarter = document.getElementById('btn-carter');
+                        btnCarter.classList.remove('seen');
+                        btnCarter.innerText = 'Carter';
+
+                        // Reset Barrett's button
+                        const btnBarrett = document.getElementById('btn-barrett');
+                        btnBarrett.classList.remove('seen');
+                        btnBarrett.innerText = 'Barrett';
+                    } else if (cleanMessage === "") {
+                        msgElement.innerText = "No new messages from Dad.";
+                    }
+                })
+                .catch(err => console.error("Error fetching message:", err));
+        }
+
+        // Send the email ping silently in the background
+        function notifyDad(sonName) {
+            // mode: 'no-cors' prevents the browser from blocking the background request
+            fetch(`${WEB_APP_URL}?action=notify&son=${sonName}`, { mode: 'no-cors' });
+        }
+
+        // Button Click Listeners
         document.getElementById('btn-carter').addEventListener('click', function() {
-            this.classList.add('seen');
-            this.innerText = '✔ Carter';
+            if (!this.classList.contains('seen')) {
+                this.classList.add('seen');
+                this.innerText = '✔ Carter';
+                notifyDad('Carter');
+            }
         });
         
         document.getElementById('btn-barrett').addEventListener('click', function() {
-            this.classList.add('seen');
-            this.innerText = '✔ Barrett';
+            if (!this.classList.contains('seen')) {
+                this.classList.add('seen');
+                this.innerText = '✔ Barrett';
+                notifyDad('Barrett');
+            }
         });
+
+        // Check for new messages every minute
+        loadMessage();
+        setInterval(loadMessage, 60000);
     </script>
 </body>
 </html>
