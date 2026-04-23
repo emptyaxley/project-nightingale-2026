@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Dashboard</title>
+    
+    <style>
+        /* Base Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: black; /* Default to black for security */
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Dashboard Container - Hidden by default until authorized */
+        #dashboard {
+            display: none; 
+            width: 100vw;
+            height: 100vh;
+            background-color: #e0e7ee;
+            position: relative;
+        }
+
+        /* The Main Map/Center Area */
+        #map-container {
+            width: 100%;
+            height: 100%;
+            background-color: #a3c9a8; /* Placeholder for map */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #4a6741;
+            font-weight: bold;
+        }
+
+        /* Dashboard Header */
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        /* Module Styling */
+        .module {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        .module-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        /* Specific Module Layouts */
+        .status-text { font-size: 2rem; font-weight: 800; color: #005A9C; margin: 0; }
+        .sub-text { font-size: 1rem; color: #555; }
+
+        /* Polaroid Styling */
+        .polaroid {
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
+            font-family: "Marker Felt", "Comic Sans MS", cursive;
+            transform: rotate(-2deg);
+        }
+        .polaroid img { width: 100%; height: auto; background: #ccc; min-height: 150px; }
+
+        /* Buttons */
+        .btn-container { display: flex; gap: 10px; margin-top: 15px; }
+        .ack-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            color: #333;
+            transition: background 0.3s;
+        }
+        .ack-btn.seen { background-color: #4CAF50; color: white; }
+
+        /* Sleeps List */
+        .sleeps-list { list-style: none; padding: 0; margin: 0; }
+        .sleeps-list li {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .sleep-number { font-weight: bold; color: #E65100; font-size: 1.4rem; }
+
+        /* --- IPAD & DESKTOP (Grid Overlay) --- */
+        @media (min-width: 768px) {
+            .module { position: absolute; width: 250px; }
+            .top-left { top: 20px; left: 20px; }
+            .top-right { top: 20px; right: 20px; }
+            .bottom-left { bottom: 20px; left: 20px; }
+            .bottom-right { bottom: 20px; right: 20px; }
+        }
+
+        /* --- IPHONE & MOBILE (Vertical Stack) --- */
+        @media (max-width: 767px) {
+            #dashboard {
+                height: auto;
+                min-height: 100vh;
+                display: flex !important; /* Override the JS grid/block */
+                flex-direction: column;
+                background-color: #f0f4f8;
+            }
+            .header { position: relative; top: 0; transform: none; left: 0; text-align: center; border-radius: 0; box-shadow: none; margin-bottom: 10px;}
+            #map-container { height: 300px; flex-shrink: 0; }
+            .module { position: relative; margin: 10px; width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-screen"></div>
+
+    <div id="dashboard">
+        <div class="header">DAD TRACKER</div>
+        
+        <div id="map-container">
+            [ MAP PLACEHOLDER ]
+        </div>
+
+        <div class="module top-left" id="mod-sector">
+            <div class="module-title">Dad's Sector Tracker</div>
+            <p class="status-text">FLYING</p>
+            <p class="sub-text">1,450 Miles from Home</p>
+        </div>
+
+        <div class="module top-right" id="mod-messages">
+            <div class="module-title">Messages</div>
+            <p id="message-text">Loading message...</p>
+            <div class="btn-container">
+                <button class="ack-btn" id="btn-carter">Carter</button>
+                <button class="ack-btn" id="btn-barrett">Barrett</button>
+            </div>
+        </div>
+
+        <div class="module bottom-left" id="mod-sleeps">
+            <div class="module-title">SLEEPS UNTIL...</div>
+            <ul class="sleeps-list">
+                <li><span class="sleep-number">4</span> Disney</li>
+                <li><span class="sleep-number">2</span> Kelli arrives</li>
+            </ul>
+        </div>
+
+        <div class="module bottom-right" id="mod-postcard">
+            <div class="module-title">Dad's Latest Postcard</div>
+            <div class="polaroid">
+                <div style="width:100%; height:150px; background:#ddd;"></div> 
+                <p style="margin-top: 10px;">Waiting for transmission...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. SECURITY PROTOCOL ---
+        const SECRET_KEY = "CJ18BM20ltb";
+        
+        // Check URL for the key
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlKey = urlParams.get('key');
+
+        if (urlKey === SECRET_KEY) {
+            // Correct key! Save to iPad memory.
+            localStorage.setItem('nightingaleAuth', SECRET_KEY);
+            // Clean the URL so the key vanishes from the address bar
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Check iPad memory to see if they are authorized
+        if (localStorage.getItem('nightingaleAuth') === SECRET_KEY) {
+            // Authorized! Show the dashboard.
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        } else {
+            // Unauthorized. Screen stays completely black.
+            document.body.innerHTML = "";
+            document.body.style.backgroundColor = "black";
+        }
+
+        // --- UI Interactions (Placeholder for later) ---
+        // Just a quick visual test for the buttons
+        document.getElementById('btn-carter').addEventListener('click', function() {
+            this.classList.add('seen');
+            this.innerText = '✔ Carter';
+        });
+        
+        document.getElementById('btn-barrett').addEventListener('click', function() {
+            this.classList.add('seen');
+            this.innerText = '✔ Barrett';
+        });
+    </script>
+</body>
+</html>
