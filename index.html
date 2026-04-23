@@ -193,8 +193,6 @@
         if (urlKey === SECRET_KEY) {
             // Correct key! Save to iPad memory.
             localStorage.setItem('nightingaleAuth', SECRET_KEY);
-            // Clean the URL so the key vanishes from the address bar
-            window.history.replaceState({}, document.title, window.location.pathname);
         }
 
         // Check iPad memory to see if they are authorized
