@@ -552,10 +552,10 @@ setInterval(loadData, 60000);
                     const placeholder = document.getElementById('postcard-placeholder');
                     const currentId = localStorage.getItem('postcardId');
 
-                    // If the script found a file, and it's either new OR the image is currently blank (just loaded)
-                    if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.src === "")) {
+                    // FIX: Use getAttribute('src') so the browser doesn't trick the code with a fake URL
+                    if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.getAttribute('src') === "")) {
                         
-                        // We use the Drive thumbnail endpoint. It's fast, converts HEIC to JPG automatically, and sizes it perfectly for the polaroid.
+                        // We use the Drive thumbnail endpoint.
                         imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
                         
                         // Wait for the image to actually load before swapping the display
@@ -570,7 +570,6 @@ setInterval(loadData, 60000);
                 })
                 .catch(err => console.error("Error fetching postcard:", err));
         }
-
         // Check for new photos every minute
         loadPostcard();
         setInterval(loadPostcard, 60000);
