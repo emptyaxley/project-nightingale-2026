@@ -340,8 +340,8 @@
                 L.polyline([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]], {color: 'blue'}).addTo(map);
 
                 const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
-                const usBounds = L.latLngBounds([[24.396308, -125.0], [49.384358, -66.93457]]);
-                map.fitBounds(dadHomeBounds.extend(usBounds), {padding: [-10,-10]});
+                // This locks the camera to just you and home, with a safety limit so it never zooms in closer than a regional view (zoom level 7)
+                map.fitBounds(dadHomeBounds, {padding: [40, 40], maxZoom: 7});
             }
             // -------- HOME MODE --------
             else if (row.mode === "HOME") {
