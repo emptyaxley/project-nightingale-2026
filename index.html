@@ -444,45 +444,66 @@ setInterval(loadData, 60000);
         setInterval(loadSleeps, 3600000);
         
         // --- 4. MESSAGE BOARD & NOTIFICATIONS ---
-        // 1. The Publish to Web CSV link for your new Messages Sheet
         const MESSAGE_CSV_URL = `https://docs.google.com/spreadsheets/d/1ALWIcL9eQV7SEoXm0xoP9lz_1XfhtLmJAUZtm4Pn6ig/gviz/tq?tqx=out:csv&headers=0`;
-        
-        // 2. The Apps Script Web App URL you just generated
-        const WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+        const NTFY_TOPIC = "dad_trackeralertsnotify__44";
 
         function loadMessage() {
             fetch(MESSAGE_CSV_URL)
                 .then(res => res.text())
                 .then(text => {
-                    // Clean up the CSV formatting
                     const cleanMessage = text.replace(/^"|"$/g, '').trim();
                     const msgElement = document.getElementById('message-text');
                     const storedMessage = localStorage.getItem('dashboardMessage');
 
-                    // If the message has changed, update UI and reset buttons!
+                    const btnCarter = document.getElementById('btn-carter');
+                    const btnBarrett = document.getElementById('btn-barrett');
+
+                    function resetButtons() {
+                        btnCarter.classList.remove('seen');
+                        btnCarter.innerText = 'Carter';
+                        localStorage.setItem('carterSeen', 'false');
+
+                        btnBarrett.classList.remove('seen');
+                        btnBarrett.innerText = 'Barrett';
+                        localStorage.setItem('barrettSeen', 'false');
+                    }
+
+                    function restoreButtons() {
+                        if (localStorage.getItem('carterSeen') === 'true') {
+                            btnCarter.classList.add('seen');
+                            btnCarter.innerText = '✔ Carter';
+                        }
+                        if (localStorage.getItem('barrettSeen') === 'true') {
+                            btnBarrett.classList.add('seen');
+                            btnBarrett.innerText = '✔ Barrett';
+                        }
+                    }
+
                     if (cleanMessage !== storedMessage && cleanMessage !== "") {
                         msgElement.innerText = cleanMessage;
                         localStorage.setItem('dashboardMessage', cleanMessage);
-
-                        // Reset Carter's button
-                        const btnCarter = document.getElementById('btn-carter');
-                        btnCarter.classList.remove('seen');
-                        btnCarter.innerText = 'Carter';
-
-                        // Reset Barrett's button
-                        const btnBarrett = document.getElementById('btn-barrett');
-                        btnBarrett.classList.remove('seen');
-                        btnBarrett.innerText = 'Barrett';
-                    } else if (cleanMessage === "") {
-                        msgElement.innerText = "No new messages from Dad.";
+                        resetButtons(); 
+                    } 
+                    else if (cleanMessage === storedMessage && cleanMessage !== "") {
+                        msgElement.innerText = cleanMessage;
+                        restoreButtons(); 
+                    } 
+                    else if (cleanMessage === "") {
+                        msgElement.innerText = "Tap your name to say Hi to Dad!";
+                        
+                        if (storedMessage !== "") {
+                            localStorage.setItem('dashboardMessage', "");
+                            resetButtons();
+                        } else {
+                            restoreButtons(); 
+                        }
                     }
                 })
-                .catch(err => console.error("Error fetching message:", err));
+                .catch(err => {
+                    console.error("Error fetching message:", err);
+                    document.getElementById('message-text').innerText = "Tap your name to say Hi to Dad!";
+                });
         }
-
-        // --- THE NTFY PUSH NOTIFICATION ---
-        // Replace this with the exact secret topic you typed into the ntfy app
-        const NTFY_TOPIC = "dad_trackeralertsnotify__44";
 
         function notifyDad(sonName) {
             fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
@@ -490,16 +511,16 @@ setInterval(loadData, 60000);
                 body: `${sonName} just read your message on the dashboard!`,
                 headers: {
                     'Title': 'Dad Tracker Alert',
-                    'Tags': 'airplane' // Adds a little airplane emoji to the alert!
+                    'Tags': 'airplane' 
                 }
             }).catch(err => console.error("Error sending notification:", err));
         }
 
-        // Button Click Listeners
         document.getElementById('btn-carter').addEventListener('click', function() {
             if (!this.classList.contains('seen')) {
                 this.classList.add('seen');
                 this.innerText = '✔ Carter';
+                localStorage.setItem('carterSeen', 'true');
                 notifyDad('Carter');
             }
         });
@@ -508,11 +529,11 @@ setInterval(loadData, 60000);
             if (!this.classList.contains('seen')) {
                 this.classList.add('seen');
                 this.innerText = '✔ Barrett';
+                localStorage.setItem('barrettSeen', 'true');
                 notifyDad('Barrett');
             }
         });
 
-        // Check for new messages every minute
         loadMessage();
         setInterval(loadMessage, 60000);
     </script>
