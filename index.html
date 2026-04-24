@@ -184,8 +184,11 @@
         <div class="module bottom-right" id="mod-postcard">
             <div class="module-title">Dad's Latest Postcard</div>
             <div class="polaroid">
-                <div style="width:100%; height:150px; background:#ddd;"></div> 
-                <p style="margin-top: 10px;">Waiting for transmission...</p>
+                <img id="postcard-img" src="" style="width: 100%; height: auto; max-height: 180px; object-fit: cover; display: none; background: #ddd;" />
+                
+                <div id="postcard-placeholder" style="width:100%; height:150px; background:#ddd; display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif;">Awaiting Photo...</div> 
+                
+                <p style="margin-top: 10px;">Wish you were here!</p>
             </div>
         </div>
     </div>
@@ -536,6 +539,42 @@ setInterval(loadData, 60000);
 
         loadMessage();
         setInterval(loadMessage, 60000);
+
+        // --- 5. POSTCARD AUTO-PULL ---
+        // Paste your new Apps Script Web App URL here
+        const POSTCARD_WEB_APP = "https://script.google.com/macros/s/AKfycbxs1ZnFZcE7xhEMWISy4Opr_KFuEtcWeIJ78pH4Fnbhwik93cSWT2uL3KtOf7mjuTTsDA/exec";
+
+        function loadPostcard() {
+            fetch(POSTCARD_WEB_APP)
+                .then(res => res.text())
+                .then(fileId => {
+                    const imgElement = document.getElementById('postcard-img');
+                    const placeholder = document.getElementById('postcard-placeholder');
+                    const currentId = localStorage.getItem('postcardId');
+
+                    // If the script found a file, and it's either new OR the image is currently blank (just loaded)
+                    if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.src === "")) {
+                        
+                        // We use the Drive thumbnail endpoint. It's fast, converts HEIC to JPG automatically, and sizes it perfectly for the polaroid.
+                        imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+                        
+                        // Wait for the image to actually load before swapping the display
+                        imgElement.onload = function() {
+                            imgElement.style.display = 'block';
+                            placeholder.style.display = 'none';
+                        };
+                        
+                        // Save the new ID to memory so we don't reload it unnecessarily
+                        localStorage.setItem('postcardId', fileId);
+                    }
+                })
+                .catch(err => console.error("Error fetching postcard:", err));
+        }
+
+        // Check for new photos every minute
+        loadPostcard();
+        setInterval(loadPostcard, 60000);
+        
     </script>
 </body>
 </html>
