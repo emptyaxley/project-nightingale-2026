@@ -491,9 +491,12 @@
                                 const sleeps = calculateSleeps(parsedDate);
                                 
                                 if (sleeps >= 0) {
+                                    // THE FIX: Check if sleeps is 0, otherwise use the number
+                                    const displayValue = (sleeps === 0) ? "TODAY!" : sleeps;
+                                    
                                     const li = document.createElement('li');
                                     li.innerHTML = `<span class="event-name">${eventName}</span> 
-                                                    <span class="sleep-number">${sleeps}</span>`;
+                                                    <span class="sleep-number">${displayValue}</span>`;
                                     container.appendChild(li);
                                 }
                             }
