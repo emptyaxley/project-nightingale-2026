@@ -557,6 +557,9 @@
                     const cleanMessage = text.replace(/^"|"$/g, '').trim();
                     const msgElement = document.getElementById('message-text');
                     const storedMessage = localStorage.getItem('dashboardMessage');
+                    
+                    // Grab the container holding the boys' buttons
+                    const btnContainer = document.querySelector('.btn-container');
 
                     const btnCarter = document.getElementById('btn-carter');
                     const btnBarrett = document.getElementById('btn-barrett');
@@ -571,6 +574,47 @@
                         localStorage.setItem('barrettSeen', 'false');
                     }
 
+                    function restoreButtons() {
+                        if (localStorage.getItem('carterSeen') === 'true') {
+                            btnCarter.classList.add('seen');
+                            btnCarter.innerText = '✔ Carter';
+                        }
+                        if (localStorage.getItem('barrettSeen') === 'true') {
+                            btnBarrett.classList.add('seen');
+                            btnBarrett.innerText = '✔ Barrett';
+                        }
+                    }
+
+                    // STATE 1: Brand new message from Dad!
+                    if (cleanMessage !== storedMessage && cleanMessage !== "") {
+                        msgElement.innerText = cleanMessage;
+                        btnContainer.style.display = 'flex'; // Show the buttons
+                        localStorage.setItem('dashboardMessage', cleanMessage);
+                        resetButtons(); 
+                    } 
+                    // STATE 2: The message hasn't changed (iPad refreshed)
+                    else if (cleanMessage === storedMessage && cleanMessage !== "") {
+                        msgElement.innerText = cleanMessage;
+                        btnContainer.style.display = 'flex'; // Show the buttons
+                        restoreButtons(); 
+                    } 
+                    // STATE 3: The spreadsheet is empty
+                    else if (cleanMessage === "") {
+                        msgElement.innerText = "No new messages...";
+                        btnContainer.style.display = 'none'; // Hide the buttons!
+                        
+                        if (storedMessage !== "") {
+                            localStorage.setItem('dashboardMessage', "");
+                            resetButtons();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching message:", err);
+                    document.getElementById('message-text').innerText = "No new messages...";
+                    document.querySelector('.btn-container').style.display = 'none';
+                });
+        }
                     function restoreButtons() {
                         if (localStorage.getItem('carterSeen') === 'true') {
                             btnCarter.classList.add('seen');
