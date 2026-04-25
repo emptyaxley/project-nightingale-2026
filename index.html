@@ -113,9 +113,17 @@
             text-align: center;
             font-family: "Marker Felt", "Comic Sans MS", cursive;
             transform: rotate(-2deg);
-            margin-top: auto; /* Pushes it to the bottom if module stretches */
+            margin-top: auto; 
         }
-        .polaroid img { width: 100%; height: auto; background: #ccc; min-height: 150px; }
+        
+        /* This forces both the image and the grey placeholder to be perfect squares */
+        .polaroid img, #postcard-placeholder { 
+            width: 100%; 
+            aspect-ratio: 1 / 1; 
+            object-fit: cover; 
+            background: #ddd; 
+            border-radius: 2px; /* Adds a tiny, realistic softening to the photo edges */
+        }
 
         /* Buttons */
         .btn-container { display: flex; gap: 10px; margin-top: 15px; }
@@ -286,8 +294,8 @@
             <div class="module" id="mod-postcard">
                 <div class="module-title">Dad's Latest Postcard</div>
                 <div class="polaroid">
-                    <img id="postcard-img" src="" style="width: 100%; height: auto; max-height: 180px; object-fit: cover; display: none; background: #ddd;" />
-                    <div id="postcard-placeholder" style="width:100%; height:150px; background:#ddd; display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif;">Awaiting Photo...</div> 
+                    <img id="postcard-img" src="" style="display: none;" />
+                    <div id="postcard-placeholder" style="display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif;">Awaiting Photo...</div> 
                     <p style="margin-top: 10px;">Wish you were here!</p>
                 </div>
             </div>
