@@ -146,7 +146,7 @@
             color: white;
         }
 
-   /* Sleeps List */
+        /* Sleeps List */
         .sleeps-list { list-style: none; padding: 0; margin: 0; }
         .sleeps-list li {
             font-size: 1.1rem;
@@ -402,7 +402,7 @@
                     const values = table.rows[0].c;
 
                     const row = {};
-                    // FIX: Replaced optional chaining with older fallback for older iPads
+                    // Older iPad safe check
                     headers.forEach((h, i) => row[h] = (values[i] && values[i].v) ? values[i].v : "");
 
                     const mapContainer = document.getElementById('map-container');
@@ -514,18 +514,15 @@
                                 if (sleeps >= 0) {
                                     const li = document.createElement('li');
                                     
-                                    // If it's today, use the green styles and emoji!
+                                    // Today Logic
                                     if (sleeps === 0) {
                                         li.classList.add('today-row');
                                         li.innerHTML = `<span class="event-name">${eventName}</span> 
                                                         <span class="sleep-number today-text">TODAY! 🎉</span>`;
-                                    } 
-                                    // Otherwise, just show the standard black number
-                                    else {
+                                    } else {
                                         li.innerHTML = `<span class="event-name">${eventName}</span> 
                                                         <span class="sleep-number">${sleeps}</span>`;
                                     }
-                                    
                                     container.appendChild(li);
                                 }
                             }
@@ -557,8 +554,6 @@
                     const cleanMessage = text.replace(/^"|"$/g, '').trim();
                     const msgElement = document.getElementById('message-text');
                     const storedMessage = localStorage.getItem('dashboardMessage');
-                    
-                    // Grab the container holding the boys' buttons
                     const btnContainer = document.querySelector('.btn-container');
 
                     const btnCarter = document.getElementById('btn-carter');
@@ -585,24 +580,20 @@
                         }
                     }
 
-                    // STATE 1: Brand new message from Dad!
                     if (cleanMessage !== storedMessage && cleanMessage !== "") {
                         msgElement.innerText = cleanMessage;
-                        btnContainer.style.display = 'flex'; // Show the buttons
+                        btnContainer.style.display = 'flex';
                         localStorage.setItem('dashboardMessage', cleanMessage);
                         resetButtons(); 
                     } 
-                    // STATE 2: The message hasn't changed (iPad refreshed)
                     else if (cleanMessage === storedMessage && cleanMessage !== "") {
                         msgElement.innerText = cleanMessage;
-                        btnContainer.style.display = 'flex'; // Show the buttons
+                        btnContainer.style.display = 'flex';
                         restoreButtons(); 
                     } 
-                    // STATE 3: The spreadsheet is empty
                     else if (cleanMessage === "") {
                         msgElement.innerText = "No new messages...";
-                        btnContainer.style.display = 'none'; // Hide the buttons!
-                        
+                        btnContainer.style.display = 'none';
                         if (storedMessage !== "") {
                             localStorage.setItem('dashboardMessage', "");
                             resetButtons();
@@ -615,45 +606,9 @@
                     document.querySelector('.btn-container').style.display = 'none';
                 });
         }
-                    function restoreButtons() {
-                        if (localStorage.getItem('carterSeen') === 'true') {
-                            btnCarter.classList.add('seen');
-                            btnCarter.innerText = '✔ Carter';
-                        }
-                        if (localStorage.getItem('barrettSeen') === 'true') {
-                            btnBarrett.classList.add('seen');
-                            btnBarrett.innerText = '✔ Barrett';
-                        }
-                    }
 
-                    if (cleanMessage !== storedMessage && cleanMessage !== "") {
-                        msgElement.innerText = cleanMessage;
-                        localStorage.setItem('dashboardMessage', cleanMessage);
-                        resetButtons(); 
-                    } 
-                    else if (cleanMessage === storedMessage && cleanMessage !== "") {
-                        msgElement.innerText = cleanMessage;
-                        restoreButtons(); 
-                    } 
-                    else if (cleanMessage === "") {
-                        msgElement.innerText = "Tap your name to say Hi to Dad!";
-                        if (storedMessage !== "") {
-                            localStorage.setItem('dashboardMessage', "");
-                            resetButtons();
-                        } else {
-                            restoreButtons(); 
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.error("Error fetching message:", err);
-                    document.getElementById('message-text').innerText = "Tap your name to say Hi to Dad!";
-                });
-        }
-
-        // Updated Push Function to accept custom messages
+        // Updated Push Function
         function notifyDad(sonName, customAction) {
-            // Give it a fallback just in case
             const actionText = customAction || "just read your message on the dashboard!";
             fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
                 method: 'POST',
@@ -701,10 +656,8 @@
                 const son = this.getAttribute('data-son');
                 const msg = this.getAttribute('data-msg');
 
-                // Send the specific push
                 notifyDad(son, `says: "${msg}"`);
 
-                // Visual Confirmation
                 const originalText = this.innerText;
                 const originalBg = this.style.backgroundColor;
                 const originalColor = this.style.color;
@@ -713,7 +666,6 @@
                 this.style.backgroundColor = '#4CAF50';
                 this.style.color = 'white';
 
-                // Wait 2 seconds, then reset and go back
                 setTimeout(function() {
                     btn.innerText = originalText;
                     btn.style.backgroundColor = originalBg;
