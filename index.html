@@ -14,25 +14,74 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: black; /* Default to black for security */
+            background-color: #1e293b; /* A dark slate background to make the grey modules pop */
             color: #333;
             overflow-x: hidden;
         }
 
-        /* Dashboard Container - Hidden by default until authorized */
+        /* Dashboard Container */
         #dashboard {
             display: none; 
             width: 100vw;
-            height: 100vh;
-            background-color: #e0e7ee;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
             position: relative;
         }
 
-        /* The Main Map/Center Area */
+        /* Dashboard Header */
+        .header {
+            text-align: center;
+            background: white;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: max-content;
+            margin: 0 auto 20px auto;
+        }
+
+        /* --- THE NEW GRID LAYOUT --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Module Styling */
+        .module {
+            background: #e1e6eb; /* Solid cool grey (removed transparency for older iPad performance) */
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* The Map Module spans all 3 columns */
+        .map-module {
+            grid-column: 1 / -1;
+            padding: 0; /* Remove padding so map can go edge-to-edge */
+            overflow: hidden;
+        }
+
+        /* The new Status Header inside the Map module */
+        .map-header {
+            padding: 15px 25px;
+            background: #e1e6eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ccc;
+        }
+
         #map-container {
             width: 100%;
-            height: 100%;
-            background-color: #a3c9a8; /* Placeholder for map */
+            height: 400px; /* Fixed height for the map */
+            background-color: #a3c9a8; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,44 +90,20 @@
             font-weight: bold;
         }
 
-        /* Dashboard Header */
-        .header {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 10px 30px;
-            border-radius: 20px;
-            font-size: 1.5rem;
-            font-weight: 800;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 2000;
-        }
-
-        /* Module Styling */
-        .module {
-            background: rgba(225, 230, 235, 0.95); /* A sophisticated, cool grey */
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25); /* Slightly darker shadow to lift it off the map */
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-        }
-
         .module-title {
             font-size: 0.9rem;
             text-transform: uppercase;
             font-weight: 700;
             color: #666;
             margin-bottom: 10px;
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid #ccc;
             padding-bottom: 5px;
         }
 
         /* Specific Module Layouts */
         .status-text { font-size: 2rem; font-weight: 800; color: #005A9C; margin: 0; }
-        .sub-text { font-size: 1rem; color: #555; }
+        .sub-text { font-size: 1rem; color: #555; margin: 0; }
+        .date-text { font-size: 0.85rem; color: #666; font-style: italic; margin: 5px 0 0 0; }
 
         /* Polaroid Styling */
         .polaroid {
@@ -88,6 +113,7 @@
             text-align: center;
             font-family: "Marker Felt", "Comic Sans MS", cursive;
             transform: rotate(-2deg);
+            margin-top: auto; /* Pushes it to the bottom if module stretches */
         }
         .polaroid img { width: 100%; height: auto; background: #ccc; min-height: 150px; }
 
@@ -101,11 +127,24 @@
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            background-color: #e0e0e0;
+            background-color: #d0d5da;
             color: #333;
             transition: background 0.3s;
         }
         .ack-btn.seen { background-color: #4CAF50; color: white; }
+
+        .send-msg-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #005A9C;
+            color: white;
+        }
 
         /* Sleeps List */
         .sleeps-list { list-style: none; padding: 0; margin: 0; }
@@ -121,29 +160,63 @@
         .sleep-list li:last-child { border-bottom: none; }
         .event-name { font-weight: 600; color: #333; }
         .sleep-number { font-weight: bold; color: #E65100; font-size: 1.4rem; background: #fff3e0; padding: 2px 8px; border-radius: 8px; }
-        .sleep-number { font-weight: bold; color: #E65100; font-size: 1.4rem; }
 
-        /* --- IPAD & DESKTOP (Grid Overlay) --- */
-        @media (min-width: 768px) {
-            .module { position: absolute; width: 250px; }
-            .top-left { top: 20px; left: 20px; }
-            .top-right { top: 20px; right: 20px; }
-            .bottom-left { bottom: 20px; left: 20px; }
-            .bottom-right { bottom: 20px; right: 20px; }
+        /* --- THE NEW SEND MESSAGE VIEW --- */
+        #send-view {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100vw; height: 100vh; 
+            background: #1e293b; 
+            z-index: 5000; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            overflow-y: auto;
         }
 
-        /* --- IPHONE & MOBILE (Vertical Stack) --- */
+        .send-grid {
+            display: flex; 
+            gap: 20px; 
+            max-width: 900px; 
+            margin: 20px auto 0 auto;
+        }
+
+        .send-col {
+            flex: 1; 
+            background: #e1e6eb; 
+            border-radius: 15px; 
+            padding: 20px; 
+            text-align: center;
+        }
+
+        .push-btn {
+            display: block; 
+            width: 100%; 
+            padding: 20px 15px; 
+            margin-bottom: 15px;
+            background: white; 
+            border: 2px solid #ccc; 
+            border-radius: 10px;
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            color: #333;
+            cursor: pointer;
+        }
+
+        #btn-cancel-send {
+            background: #d0d5da;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* Mobile Adjustments */
         @media (max-width: 767px) {
-            #dashboard {
-                height: auto;
-                min-height: 100vh;
-                display: flex !important; /* Override the JS grid/block */
-                flex-direction: column;
-                background-color: #f0f4f8;
-            }
-            .header { position: relative; top: 0; transform: none; left: 0; text-align: center; border-radius: 0; box-shadow: none; margin-bottom: 10px;}
-            #map-container { height: 300px; flex-shrink: 0; }
-            .module { position: relative; margin: 10px; width: auto; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .send-grid { flex-direction: column; }
         }
     </style>
 </head>
@@ -154,41 +227,72 @@
     <div id="dashboard">
         <div class="header">DAD TRACKER</div>
         
-        <div id="map-container">
-            [ MAP PLACEHOLDER ]
-        </div>
-
-        <div class="module top-left" id="mod-sector">
-            <div class="module-title">Dad's Status</div>
-            <p class="status-text">Locating Dad</p>
-            <p class="date-text" style="font-size: 0.85rem; color: #666; font-style: italic; margin: 5px 0;"></p>
-            <p class="sub-text">Loading...</p>
-        </div>
-
-        <div class="module top-right" id="mod-messages">
-            <div class="module-title">Messages</div>
-            <p id="message-text">Loading message...</p>
-            <div class="btn-container">
-                <button class="ack-btn" id="btn-carter">Carter</button>
-                <button class="ack-btn" id="btn-barrett">Barrett</button>
+        <div class="dashboard-grid">
+            
+            <div class="module map-module" id="mod-sector">
+                <div class="map-header">
+                    <div>
+                        <div class="module-title" style="border:none; margin-bottom:0;">Dad's Status</div>
+                        <p class="status-text">Locating Dad</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p class="sub-text">Loading...</p>
+                        <p class="date-text"></p>
+                    </div>
+                </div>
+                <div id="map-container">
+                    [ MAP PLACEHOLDER ]
+                </div>
             </div>
-        </div>
 
-        <div class="module bottom-left" id="mod-sleeps">
-            <div class="module-title">SLEEPS UNTIL...</div>
-            <ul class="sleeps-list" id="sleeps-list-container">
-                <li><span class="event-name">Loading timer...</span></li>
-            </ul>
-        </div>
+            <div class="module" id="mod-messages">
+                <div class="module-title">Messages</div>
+                <p id="message-text" style="font-size: 1.1rem; line-height: 1.4; flex-grow: 1;">Loading message...</p>
+                <div class="btn-container">
+                    <button class="ack-btn" id="btn-carter">Carter</button>
+                    <button class="ack-btn" id="btn-barrett">Barrett</button>
+                </div>
+                <button class="send-msg-btn" id="btn-open-send">Send Dad a Message</button>
+            </div>
 
-        <div class="module bottom-right" id="mod-postcard">
-            <div class="module-title">Dad's Latest Postcard</div>
-            <div class="polaroid">
-                <img id="postcard-img" src="" style="width: 100%; height: auto; max-height: 180px; object-fit: cover; display: none; background: #ddd;" />
+            <div class="module" id="mod-sleeps">
+                <div class="module-title">SLEEPS UNTIL...</div>
+                <ul class="sleeps-list" id="sleeps-list-container">
+                    <li><span class="event-name">Loading timer...</span></li>
+                </ul>
+            </div>
+
+            <div class="module" id="mod-postcard">
+                <div class="module-title">Dad's Latest Postcard</div>
+                <div class="polaroid">
+                    <img id="postcard-img" src="" style="width: 100%; height: auto; max-height: 180px; object-fit: cover; display: none; background: #ddd;" />
+                    <div id="postcard-placeholder" style="width:100%; height:150px; background:#ddd; display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif;">Awaiting Photo...</div> 
+                    <p style="margin-top: 10px;">Wish you were here!</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="send-view">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <button id="btn-cancel-send">← Back to Dashboard</button>
+            <div class="header" style="margin: 0 auto;">SEND DAD A PING</div>
+            
+            <div class="send-grid">
+                <div class="send-col">
+                    <h2 style="margin-top: 0; color: #005A9C;">Carter</h2>
+                    <button class="push-btn" data-son="Carter" data-msg="Miss you dad!">Miss you dad!</button>
+                    <button class="push-btn" data-son="Carter" data-msg="Good morning, Dad!">Good morning, Dad!</button>
+                    <button class="push-btn" data-son="Carter" data-msg="Send us a new pic!">Send us a new pic!</button>
+                </div>
                 
-                <div id="postcard-placeholder" style="width:100%; height:150px; background:#ddd; display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif;">Awaiting Photo...</div> 
-                
-                <p style="margin-top: 10px;">Wish you were here!</p>
+                <div class="send-col">
+                    <h2 style="margin-top: 0; color: #005A9C;">Barrett</h2>
+                    <button class="push-btn" data-son="Barrett" data-msg="Miss you dad!">Miss you dad!</button>
+                    <button class="push-btn" data-son="Barrett" data-msg="Good morning, Dad!">Good morning, Dad!</button>
+                    <button class="push-btn" data-son="Barrett" data-msg="Send us a new pic!">Send us a new pic!</button>
+                </div>
             </div>
         </div>
     </div>
@@ -197,28 +301,22 @@
         // --- 1. SECURITY PROTOCOL ---
         const SECRET_KEY = "CJ18BM20ltb";
         
-        // Check URL for the key
         const urlParams = new URLSearchParams(window.location.search);
         const urlKey = urlParams.get('key');
 
         if (urlKey === SECRET_KEY) {
-            // Correct key! Save to iPad memory.
             localStorage.setItem('nightingaleAuth', SECRET_KEY);
         }
 
-        // Check iPad memory to see if they are authorized
         if (localStorage.getItem('nightingaleAuth') === SECRET_KEY) {
-            // Authorized! Show the dashboard.
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
         } else {
-            // Unauthorized. Screen stays completely black.
             document.body.innerHTML = "";
             document.body.style.backgroundColor = "black";
         }
 
-    // --- 2. GOOGLE SHEET DATA FETCHING ---
-        // Paste your published CSV link here
+        // --- 2. GOOGLE SHEET DATA FETCHING (Main Map) ---
         const SHEET_ID = "1_n0RQwaGF_WxeujBq8Z04NG_ejzK71VhPa7YJE0WmM4";
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
@@ -233,14 +331,13 @@
             const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             return (R * c).toFixed(1); 
-    }
-        // Convert Google Sheets serial date (e.g., 36525.8) to JS Date
+        }
+
         function convertSerialDate(serial) {
             const epoch = new Date(1899, 11, 30); 
             return new Date(epoch.getTime() + serial * 24 * 60 * 60 * 1000);
         }
 
-        // Parse Google Sheets date string
         function parseSheetDate(sheetValue) {
             if (!sheetValue) return null;
             if (typeof sheetValue === "number") return convertSerialDate(sheetValue);
@@ -251,7 +348,6 @@
             return new Date(year, month - 1, day, hours, minutes, seconds);
         }
 
-        // Friendly updated date string
         function formatUpdated(sheetValue) {
             const d = parseSheetDate(sheetValue);
             if (!d) return "N/A";
@@ -274,112 +370,94 @@
                 return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
             }
         }
+
         function loadData() {
-    fetch(SHEET_URL)
-        .then(res => res.text())
-        .then(text => {
-            const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
-            const table = JSON.parse(jsonText).table;
-            const headers = table.cols.map(c => c.label);
-            const values = table.rows[0].c;
+            fetch(SHEET_URL)
+                .then(res => res.text())
+                .then(text => {
+                    const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
+                    const table = JSON.parse(jsonText).table;
+                    const headers = table.cols.map(c => c.label);
+                    const values = table.rows[0].c;
 
-            const row = {};
-            headers.forEach((h, i) => row[h] = values[i]?.v || "");
+                    const row = {};
+                    headers.forEach((h, i) => row[h] = values[i]?.v || "");
 
-           // Target the new Dashboard UI elements
-            const mapContainer = document.getElementById('map-container');
-            const sectorStatus = document.querySelector('#mod-sector .status-text');
-            const sectorDate = document.querySelector('#mod-sector .date-text');
-            const sectorSub = document.querySelector('#mod-sector .sub-text');
+                    const mapContainer = document.getElementById('map-container');
+                    const sectorStatus = document.querySelector('#mod-sector .status-text');
+                    const sectorDate = document.querySelector('#mod-sector .date-text');
+                    const sectorSub = document.querySelector('#mod-sector .sub-text');
 
-            // Clear the map container for a fresh draw
-            mapContainer.innerHTML = "";
-            
-            // Set the Updated Date (assuming column 1 is named "updated" in your sheet)
-            sectorDate.innerText = "Updated: " + formatUpdated(row.updated);
+                    mapContainer.innerHTML = "";
+                    sectorDate.innerText = "Updated: " + formatUpdated(row.updated);
 
-            // -------- FLYING MODE --------
-            if (row.mode === "FLYING" && row.flight_id) {
-                mapContainer.style.display = 'flex';
-                sectorStatus.innerText = "In the Air";
-                sectorSub.innerText = "Flight: " + row.flight_id;
-                sectorStatus.style.color = "#000080"; // Navy Blue
+                    // -------- FLYING MODE --------
+                    if (row.mode === "FLYING" && row.flight_id) {
+                        mapContainer.style.display = 'flex';
+                        sectorStatus.innerText = "In the Air";
+                        sectorSub.innerText = "Flight: " + row.flight_id;
+                        sectorStatus.style.color = "#000080"; 
 
-                const iframe = document.createElement("iframe");
-                iframe.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`;
-                iframe.style.width = "100%";
-                iframe.style.height = "100%";
-                iframe.style.border = "none";
-                mapContainer.appendChild(iframe);
-            } 
-           // -------- GROUND MODE --------
-            else if (row.mode === "GROUND" || row.mode === "Landed") {
-                mapContainer.style.display = 'flex';
-                const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
+                        const iframe = document.createElement("iframe");
+                        iframe.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`;
+                        iframe.style.width = "100%";
+                        iframe.style.height = "100%";
+                        iframe.style.border = "none";
+                        mapContainer.appendChild(iframe);
+                    } 
+                    // -------- GROUND MODE --------
+                    else if (row.mode === "GROUND" || row.mode === "Landed") {
+                        mapContainer.style.display = 'flex';
+                        const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
 
-                sectorStatus.innerText = "On the Ground";
-                
-                // --- THE NEW CITY/STATE UPDATE ---
-                // We use innerHTML here so we can add a line break (<br>) 
-                // and make the distance text slightly smaller so the city stands out.
-                sectorSub.innerHTML = `In ${row.city}, ${row.state}<br><span style="font-size: 0.9em; color: #888;">${distance} miles from home</span>`;
-                
-                sectorStatus.style.color = "#355E3B"; // Hunter Green
+                        sectorStatus.innerText = "On the Ground";
+                        sectorSub.innerHTML = `In ${row.city}, ${row.state} (${distance} miles away)`;
+                        sectorStatus.style.color = "#355E3B"; 
 
-                const mapDiv = document.createElement("div");
-                mapDiv.id = "map";
-                mapDiv.style.width = "100%";
-                mapDiv.style.height = "100%";
-                mapContainer.appendChild(mapDiv);
+                        const mapDiv = document.createElement("div");
+                        mapDiv.id = "map";
+                        mapDiv.style.width = "100%";
+                        mapDiv.style.height = "100%";
+                        mapContainer.appendChild(mapDiv);
 
-                const map = L.map('map', {zoomControl: false, attributionControl: false});
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
+                        const map = L.map('map', {zoomControl: false, attributionControl: false});
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
 
-                L.marker([row.dad_lat, row.dad_long]).addTo(map).bindPopup("Dad").openPopup();
-                L.marker([HOME_LAT, HOME_LONG]).addTo(map).bindPopup("Home").openPopup();
-                L.polyline([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]], {color: 'blue'}).addTo(map);
+                        L.marker([row.dad_lat, row.dad_long]).addTo(map).bindPopup("Dad").openPopup();
+                        L.marker([HOME_LAT, HOME_LONG]).addTo(map).bindPopup("Home").openPopup();
+                        L.polyline([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]], {color: 'blue'}).addTo(map);
 
-                const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
-                // This locks the camera to just you and home, with a safety limit so it never zooms in closer than a regional view (zoom level 7)
-                map.fitBounds(dadHomeBounds, {padding: [40, 40], maxZoom: 7});
-            }
-            // -------- HOME MODE --------
-            else if (row.mode === "HOME") {
-                mapContainer.style.display = 'none'; // Hides the center map
-                sectorStatus.innerText = "Home";
-                sectorSub.innerText = ""; // Empty out the sub-text
-                sectorStatus.style.color = "#000000"; // Black
-            }
-        })
-        .catch(err => console.error("Error fetching map data:", err));
-}
+                        const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
+                        map.fitBounds(dadHomeBounds, {padding: [40, 40], maxZoom: 7});
+                    }
+                    // -------- HOME MODE --------
+                    else if (row.mode === "HOME") {
+                        mapContainer.style.display = 'none'; // Hides the map portion cleanly
+                        sectorStatus.innerText = "Home";
+                        sectorSub.innerText = "Safe and sound."; 
+                        sectorStatus.style.color = "#333"; 
+                    }
+                })
+                .catch(err => console.error("Error fetching map data:", err));
+        }
 
-// Initial load and interval
-loadData();
-setInterval(loadData, 60000);
+        loadData();
+        setInterval(loadData, 60000);
 
         // --- 3. COUNTDOWN TIMERS FETCHING ---
-        // REPLACE this with the ID of your NEW Sleeps Spreadsheet
         const SLEEPS_SHEET_ID = "1hTgmLdIhX1tVZbI2YB1tExCTreIAgHSqN8i31zURNkg";
         const SLEEPS_URL = `https://docs.google.com/spreadsheets/d/${SLEEPS_SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
         function calculateSleeps(targetDateStr) {
-            // Grab today's date and set the clock to exactly midnight
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-
-            // Grab the target date and set the clock to midnight
             const target = new Date(targetDateStr);
             target.setHours(0, 0, 0, 0);
-
-            // Calculate the difference in time, then convert to days
             const diffTime = target - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            return diffDays;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
-       function loadSleeps() {
+        function loadSleeps() {
             fetch(SLEEPS_URL)
                 .then(res => res.text())
                 .then(text => {
@@ -388,39 +466,29 @@ setInterval(loadData, 60000);
                     const rows = table.rows;
 
                     const container = document.getElementById('sleeps-list-container');
-                    container.innerHTML = ""; // Clear the loading text
+                    container.innerHTML = ""; 
 
-                    // Loop through every row in the spreadsheet
                     rows.forEach(row => {
-                        // Col A is Event (index 0), Col B is Date (index 1)
                         const eventName = row.c[0] ? row.c[0].v : "";
-                        // Try to get the nicely formatted string first, then fallback to raw value
                         const dateValue = row.c[1] ? (row.c[1].f || row.c[1].v) : null;
 
                         if (eventName && dateValue) {
                             let parsedDate = null;
                             
-                            // 1. Handle Google's weird internal format: "Date(2026,4,15)"
                             if (typeof dateValue === 'string' && dateValue.startsWith('Date')) {
                                 let parts = dateValue.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
                                 if (parts) {
                                     parsedDate = new Date(parts[1], parts[2], parts[3]);
                                 }
-                            } 
-                            // 2. Handle serial dates (numbers)
-                            else if (typeof dateValue === 'number') {
+                            } else if (typeof dateValue === 'number') {
                                 parsedDate = convertSerialDate(dateValue);
-                            } 
-                            // 3. Handle normal strings: "5/15/2026"
-                            else {
+                            } else {
                                 parsedDate = new Date(dateValue);
                             }
                             
-                            // If we successfully found a date, run the math
                             if (parsedDate && !isNaN(parsedDate)) {
                                 const sleeps = calculateSleeps(parsedDate);
                                 
-                                // Only show events that are today or in the future
                                 if (sleeps >= 0) {
                                     const li = document.createElement('li');
                                     li.innerHTML = `<span class="event-name">${eventName}</span> 
@@ -431,7 +499,6 @@ setInterval(loadData, 60000);
                         }
                     });
                     
-                    // If the list is totally empty after checking everything
                     if (container.innerHTML === "") {
                         container.innerHTML = '<li><span class="event-name">No upcoming events</span></li>';
                     }
@@ -442,11 +509,11 @@ setInterval(loadData, 60000);
                         '<li><span class="event-name" style="color:red; font-size:0.9rem;">Connection error. Is the sheet Published to the Web?</span></li>';
                 });
         }
-        // Initial load and interval (updates once an hour to save resources, since sleeps only change at midnight)
+
         loadSleeps();
         setInterval(loadSleeps, 3600000);
-        
-        // --- 4. MESSAGE BOARD & NOTIFICATIONS ---
+
+        // --- 4. MESSAGE BOARD & PUSH NOTIFICATIONS ---
         const MESSAGE_CSV_URL = `https://docs.google.com/spreadsheets/d/1ALWIcL9eQV7SEoXm0xoP9lz_1XfhtLmJAUZtm4Pn6ig/gviz/tq?tqx=out:csv&headers=0`;
         const NTFY_TOPIC = "dad_trackeralertsnotify__44";
 
@@ -488,92 +555,4 @@ setInterval(loadData, 60000);
                         resetButtons(); 
                     } 
                     else if (cleanMessage === storedMessage && cleanMessage !== "") {
-                        msgElement.innerText = cleanMessage;
-                        restoreButtons(); 
-                    } 
-                    else if (cleanMessage === "") {
-                        msgElement.innerText = "Tap your name to say Hi to Dad!";
-                        
-                        if (storedMessage !== "") {
-                            localStorage.setItem('dashboardMessage', "");
-                            resetButtons();
-                        } else {
-                            restoreButtons(); 
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.error("Error fetching message:", err);
-                    document.getElementById('message-text').innerText = "Tap your name to say Hi to Dad!";
-                });
-        }
-
-        function notifyDad(sonName) {
-            fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
-                method: 'POST',
-                body: `${sonName} just read your message on the dashboard!`,
-                headers: {
-                    'Title': 'Dad Tracker Alert',
-                    'Tags': 'airplane' 
-                }
-            }).catch(err => console.error("Error sending notification:", err));
-        }
-
-        document.getElementById('btn-carter').addEventListener('click', function() {
-            if (!this.classList.contains('seen')) {
-                this.classList.add('seen');
-                this.innerText = '✔ Carter';
-                localStorage.setItem('carterSeen', 'true');
-                notifyDad('Carter');
-            }
-        });
-        
-        document.getElementById('btn-barrett').addEventListener('click', function() {
-            if (!this.classList.contains('seen')) {
-                this.classList.add('seen');
-                this.innerText = '✔ Barrett';
-                localStorage.setItem('barrettSeen', 'true');
-                notifyDad('Barrett');
-            }
-        });
-
-        loadMessage();
-        setInterval(loadMessage, 60000);
-
-        // --- 5. POSTCARD AUTO-PULL ---
-        // Paste your new Apps Script Web App URL here
-        const POSTCARD_WEB_APP = "https://script.google.com/macros/s/AKfycbwGK-qpY-f36QDunT-n7cJhJQnjyOC_wCof_eHH7If2tGRrwe9dcnk-euAQa3GmX1MQoQ/exec";
-
-        function loadPostcard() {
-            fetch(POSTCARD_WEB_APP)
-                .then(res => res.text())
-                .then(fileId => {
-                    const imgElement = document.getElementById('postcard-img');
-                    const placeholder = document.getElementById('postcard-placeholder');
-                    const currentId = localStorage.getItem('postcardId');
-
-                    // FIX: Use getAttribute('src') so the browser doesn't trick the code with a fake URL
-                    if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.getAttribute('src') === "")) {
-                        
-                        // We use the Drive thumbnail endpoint.
-                        imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
-                        
-                        // Wait for the image to actually load before swapping the display
-                        imgElement.onload = function() {
-                            imgElement.style.display = 'block';
-                            placeholder.style.display = 'none';
-                        };
-                        
-                        // Save the new ID to memory so we don't reload it unnecessarily
-                        localStorage.setItem('postcardId', fileId);
-                    }
-                })
-                .catch(err => console.error("Error fetching postcard:", err));
-        }
-        // Check for new photos every minute
-        loadPostcard();
-        setInterval(loadPostcard, 60000);
-        
-    </script>
-</body>
-</html>
+                        msg
