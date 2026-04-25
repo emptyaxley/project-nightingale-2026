@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -381,7 +381,8 @@
                     const values = table.rows[0].c;
 
                     const row = {};
-                    headers.forEach((h, i) => row[h] = values[i]?.v || "");
+                    // FIX: Replaced optional chaining with older fallback for older iPads
+                    headers.forEach((h, i) => row[h] = (values[i] && values[i].v) ? values[i].v : "");
 
                     const mapContainer = document.getElementById('map-container');
                     const sectorStatus = document.querySelector('#mod-sector .status-text');
@@ -469,8 +470,8 @@
                     container.innerHTML = ""; 
 
                     rows.forEach(row => {
-                        const eventName = row.c[0] ? row.c[0].v : "";
-                        const dateValue = row.c[1] ? (row.c[1].f || row.c[1].v) : null;
+                        const eventName = (row.c[0] && row.c[0].v) ? row.c[0].v : "";
+                        const dateValue = (row.c[1]) ? (row.c[1].f || row.c[1].v) : null;
 
                         if (eventName && dateValue) {
                             let parsedDate = null;
@@ -555,4 +556,128 @@
                         resetButtons(); 
                     } 
                     else if (cleanMessage === storedMessage && cleanMessage !== "") {
-                        msg
+                        msgElement.innerText = cleanMessage;
+                        restoreButtons(); 
+                    } 
+                    else if (cleanMessage === "") {
+                        msgElement.innerText = "Tap your name to say Hi to Dad!";
+                        if (storedMessage !== "") {
+                            localStorage.setItem('dashboardMessage', "");
+                            resetButtons();
+                        } else {
+                            restoreButtons(); 
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching message:", err);
+                    document.getElementById('message-text').innerText = "Tap your name to say Hi to Dad!";
+                });
+        }
+
+        // Updated Push Function to accept custom messages
+        function notifyDad(sonName, customAction) {
+            // Give it a fallback just in case
+            const actionText = customAction || "just read your message on the dashboard!";
+            fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+                method: 'POST',
+                body: `${sonName} ${actionText}`,
+                headers: {
+                    'Title': 'Dad Tracker Alert',
+                    'Tags': 'airplane' 
+                }
+            }).catch(err => console.error("Error sending notification:", err));
+        }
+
+        // Dashboard Ack Buttons
+        document.getElementById('btn-carter').addEventListener('click', function() {
+            if (!this.classList.contains('seen')) {
+                this.classList.add('seen');
+                this.innerText = '✔ Carter';
+                localStorage.setItem('carterSeen', 'true');
+                notifyDad('Carter');
+            }
+        });
+        
+        document.getElementById('btn-barrett').addEventListener('click', function() {
+            if (!this.classList.contains('seen')) {
+                this.classList.add('seen');
+                this.innerText = '✔ Barrett';
+                localStorage.setItem('barrettSeen', 'true');
+                notifyDad('Barrett');
+            }
+        });
+
+        // Toggle Send Message View
+        document.getElementById('btn-open-send').addEventListener('click', function() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('send-view').style.display = 'block';
+        });
+
+        document.getElementById('btn-cancel-send').addEventListener('click', function() {
+            document.getElementById('send-view').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        });
+
+        // The Custom Message Buttons
+        document.querySelectorAll('.push-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const son = this.getAttribute('data-son');
+                const msg = this.getAttribute('data-msg');
+
+                // Send the specific push
+                notifyDad(son, `says: "${msg}"`);
+
+                // Visual Confirmation
+                const originalText = this.innerText;
+                const originalBg = this.style.backgroundColor;
+                const originalColor = this.style.color;
+
+                this.innerText = '✔ Sent!';
+                this.style.backgroundColor = '#4CAF50';
+                this.style.color = 'white';
+
+                // Wait 2 seconds, then reset and go back
+                setTimeout(function() {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = originalBg;
+                    btn.style.color = originalColor;
+                    
+                    document.getElementById('send-view').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                }, 2000);
+            });
+        });
+
+        loadMessage();
+        setInterval(loadMessage, 60000);
+
+        // --- 5. POSTCARD AUTO-PULL ---
+        const POSTCARD_WEB_APP = "https://script.google.com/macros/s/AKfycbwGK-qpY-f36QDunT-n7cJhJQnjyOC_wCof_eHH7If2tGRrwe9dcnk-euAQa3GmX1MQoQ/exec";
+
+        function loadPostcard() {
+            fetch(POSTCARD_WEB_APP)
+                .then(res => res.text())
+                .then(fileId => {
+                    const imgElement = document.getElementById('postcard-img');
+                    const placeholder = document.getElementById('postcard-placeholder');
+                    const currentId = localStorage.getItem('postcardId');
+
+                    if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.getAttribute('src') === "")) {
+                        imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+                        imgElement.onload = function() {
+                            imgElement.style.display = 'block';
+                            placeholder.style.display = 'none';
+                        };
+                        localStorage.setItem('postcardId', fileId);
+                    }
+                })
+                .catch(err => console.error("Error fetching postcard:", err));
+        }
+
+        loadPostcard();
+        setInterval(loadPostcard, 60000);
+        
+    </script>
+</body>
+</html>
