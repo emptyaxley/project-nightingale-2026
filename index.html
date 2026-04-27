@@ -653,7 +653,6 @@
 
         // Fetch balances quietly in the background when the dashboard loads
         function fetchCloudBalances() {
-            if(BANK_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbzORkcipcKFmRpxdkET8MGnhDg8i09IdMLIUiUB_pV4htzJ-5eaMRET6qsrfymHmdWE/exec") return; 
             
             // We add a timestamp to the URL so the iPad doesn't accidentally use a cached version
             fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime())
