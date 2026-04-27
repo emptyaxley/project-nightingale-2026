@@ -400,11 +400,11 @@
                 alert("Insufficient funds! You can't withdraw more than you have."); return;
             }
 
-            // NEW: Prompt for the memo!
+            // Prompt for the memo
             let memo = prompt("What is this for?\n(Example: Chores, Birthday, Bought a toy)");
-            if (memo === null || memo.trim() === "") memo = "ATM Transaction"; // Default if they leave it blank
+            if (memo === null || memo.trim() === "") memo = "ATM Transaction"; 
 
-            // Calculate new balance locally so the screen updates immediately
+            // Calculate new balance locally
             if (type === 'deposit') currentBal += amount;
             else if (type === 'withdraw') currentBal -= amount;
 
@@ -415,16 +415,29 @@
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {
-                        // Force a fresh pull of all data so the new receipt shows up instantly
-                        fetchCloudData();
+                        // 1. Instantly update the balance in the iPad's memory
+                        cloudData.balances[currentBankUser] = data.balance;
                         
-                        // Fake a tiny delay so they can see the "Syncing..." message before it updates
-                        setTimeout(() => { updateDisplay(); }, 1000); 
+                        // 2. Build a timestamp that matches the Google Sheet format
+                        const rawDate = new Date();
+                        const dateString = (rawDate.getMonth() + 1) + '/' + rawDate.getDate() + '/' + rawDate.getFullYear();
+                        
+                        // 3. Inject the receipt directly into the iPad's local ledger
+                        cloudData.ledger.push({
+                            date: dateString,
+                            name: currentBankUser,
+                            type: type,
+                            amount: amount,
+                            memo: memo
+                        });
+                        
+                        // 4. Update the screen immediately—no waiting for Google!
+                        updateDisplay();
                     }
                 })
                 .catch(err => {
                     alert("Network error. Could not reach the bank!");
-                    updateDisplay();
+                    updateDisplay(); // Reset the screen if it fails
                 });
         }
     </script>
