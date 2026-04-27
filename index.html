@@ -10,248 +10,79 @@
     
     <style>
         /* Base Styles */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #1e293b; 
-            color: #333;
-            overflow-x: hidden;
-        }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #1e293b; color: #333; overflow-x: hidden; }
+        #dashboard { display: none; width: 100vw; min-height: 100vh; padding: 20px; box-sizing: border-box; position: relative; }
 
-        /* Dashboard Container */
-        #dashboard {
-            display: none; 
-            width: 100vw;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        /* The New ATM Button */
+        /* The ATM Button */
         #btn-bank {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #2e7d32;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            z-index: 3000;
-            transition: transform 0.2s;
+            position: absolute; top: 20px; right: 20px; width: 50px; height: 50px;
+            background-color: #2e7d32; color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 3000; transition: transform 0.2s;
         }
         #btn-bank:active { transform: scale(0.9); }
 
-        /* Dashboard Header */
-        .header {
-            text-align: center;
-            background: white;
-            padding: 10px 30px;
-            border-radius: 20px;
-            font-size: 1.5rem;
-            font-weight: 800;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: max-content;
-            margin: 0 auto 20px auto;
-        }
-
-        /* --- GRID LAYOUT --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .module {
-            background: #e1e6eb; 
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .map-module {
-            grid-column: 1 / -1;
-            padding: 0; 
-            overflow: hidden;
-        }
-
-        .map-header {
-            padding: 15px 25px;
-            background: #e1e6eb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #ccc;
-        }
-
-        #map-container {
-            width: 100%;
-            height: 400px; 
-            background-color: #a3c9a8; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #4a6741;
-            font-weight: bold;
-        }
-
-        .module-title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: #666;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 5px;
-        }
-
+        .header { text-align: center; background: white; padding: 10px 30px; border-radius: 20px; font-size: 1.5rem; font-weight: 800; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: max-content; margin: 0 auto 20px auto; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .module { background: #e1e6eb; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); display: flex; flex-direction: column; }
+        
+        .map-module { grid-column: 1 / -1; padding: 0; overflow: hidden; }
+        .map-header { padding: 15px 25px; background: #e1e6eb; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ccc; }
+        #map-container { width: 100%; height: 400px; background-color: #a3c9a8; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #4a6741; font-weight: bold; }
+        .module-title { font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: #666; margin-bottom: 10px; border-bottom: 2px solid #ccc; padding-bottom: 5px; }
         .status-text { font-size: 2rem; font-weight: 800; color: #005A9C; margin: 0; }
         .sub-text { font-size: 1rem; color: #555; margin: 0; }
         .date-text { font-size: 0.85rem; color: #666; font-style: italic; margin: 5px 0 0 0; }
 
-        /* Polaroid Styling (Square Ratio) */
-        .polaroid {
-            background: white;
-            padding: 10px 10px 30px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            text-align: center;
-            font-family: "Marker Felt", "Comic Sans MS", cursive;
-            transform: rotate(-2deg);
-            margin-top: auto; 
-        }
-        .polaroid img, #postcard-placeholder { 
-            width: 100%; 
-            aspect-ratio: 1 / 1; 
-            object-fit: cover; 
-            background: #ddd; 
-            border-radius: 2px;
-        }
+        .polaroid { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); text-align: center; font-family: "Marker Felt", "Comic Sans MS", cursive; transform: rotate(-2deg); margin-top: auto; }
+        .polaroid img, #postcard-placeholder { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: #ddd; border-radius: 2px; }
 
-        /* Buttons */
         .btn-container { display: flex; gap: 10px; margin-top: 15px; }
-        .ack-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            background-color: #d0d5da;
-            color: #333;
-            transition: background 0.3s;
-        }
+        .ack-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; background-color: #d0d5da; color: #333; transition: background 0.3s; }
         .ack-btn.seen { background-color: #4CAF50; color: white; }
+        .send-msg-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; background-color: #005A9C; color: white; }
 
-        .send-msg-btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            background-color: #005A9C;
-            color: white;
-        }
-
-        /* Sleeps List */
         .sleeps-list { list-style: none; padding: 0; margin: 0; }
-        .sleeps-list li {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed #ccc;
-            padding: 8px 10px; 
-        }
+        .sleeps-list li { font-size: 1.1rem; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 10px; }
         .sleeps-list li:last-child { border-bottom: none; }
         .event-name { font-weight: 600; color: #333; }
         .sleep-number { font-weight: bold; color: #333; font-size: 1.4rem; background: #eaeff4; padding: 2px 10px; border-radius: 8px; }
-        
         .today-row { background-color: #e8f5e9; border-bottom: none !important; border-radius: 8px; box-shadow: inset 0 0 5px rgba(46, 125, 50, 0.1); }
         .today-text { color: #2e7d32; background: #c8e6c9; }
 
-        /* --- OVERLAY VIEWS (Send Msg & Bank) --- */
-        .overlay-view {
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100vw; height: 100vh; 
-            background: #1e293b; 
-            z-index: 5000; 
-            padding: 20px; 
-            box-sizing: border-box; 
-            overflow-y: auto;
-        }
-
+        .overlay-view { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e293b; z-index: 5000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
         .send-grid { display: flex; gap: 20px; max-width: 900px; margin: 20px auto 0 auto; }
         .send-col { flex: 1; background: #e1e6eb; border-radius: 15px; padding: 20px; text-align: center; }
         .push-btn { display: block; width: 100%; padding: 20px 15px; margin-bottom: 15px; background: white; border: 2px solid #ccc; border-radius: 10px; font-size: 1.2rem; font-weight: bold; color: #333; cursor: pointer; }
-        
         .back-btn { background: #d0d5da; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
 
-        /* --- THE BANK ATM STYLES --- */
-        .bank-container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: #e1e6eb;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* --- THE UPGRADED BANK ATM STYLES --- */
+        .bank-container { max-width: 600px; margin: 40px auto; background: #e1e6eb; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .bank-screen { display: none; }
         .bank-title { font-size: 2rem; font-weight: 900; color: #2e7d32; margin-top: 0; margin-bottom: 20px; }
         
-        .bank-user-btn {
-            display: block; width: 100%; padding: 20px; margin-bottom: 15px;
-            background: white; border: 3px solid #2e7d32; border-radius: 15px;
-            font-size: 1.5rem; font-weight: bold; color: #2e7d32; cursor: pointer;
-        }
-        
-        .pin-input {
-            width: 80%; padding: 15px; font-size: 2rem; text-align: center;
-            letter-spacing: 10px; border-radius: 10px; border: 2px solid #ccc; margin-bottom: 20px;
-        }
-        .submit-pin-btn {
-            padding: 15px 40px; font-size: 1.2rem; background: #2e7d32; color: white;
-            border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
-        }
+        .bank-user-btn { display: block; width: 100%; padding: 20px; margin-bottom: 15px; background: white; border: 3px solid #2e7d32; border-radius: 15px; font-size: 1.5rem; font-weight: bold; color: #2e7d32; cursor: pointer; }
+        .pin-input { width: 80%; padding: 15px; font-size: 2rem; text-align: center; letter-spacing: 10px; border-radius: 10px; border: 2px solid #ccc; margin-bottom: 20px; }
+        .submit-pin-btn { padding: 15px 40px; font-size: 1.2rem; background: #2e7d32; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        .balance-display {
-            font-size: 3.5rem; font-weight: 900; color: #333;
-            background: #fff; padding: 20px; border-radius: 15px;
-            margin: 20px 0; border: 4px solid #eaeff4;
-        }
-        
-        .transaction-btn {
-            width: 48%; padding: 20px; font-size: 1.5rem; font-weight: bold;
-            border: none; border-radius: 10px; cursor: pointer; color: white; display: inline-block;
-        }
+        .balance-display { font-size: 3.5rem; font-weight: 900; color: #333; background: #fff; padding: 20px; border-radius: 15px; margin: 10px 0 20px 0; border: 4px solid #eaeff4; }
+        .transaction-btn { width: 48%; padding: 20px; font-size: 1.5rem; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; color: white; display: inline-block; }
         .btn-deposit { background-color: #2e7d32; }
         .btn-withdraw { background-color: #c62828; }
 
-        @media (max-width: 767px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .send-grid { flex-direction: column; }
-        }
+        /* NEW: The Ledger Styling */
+        .ledger-container { margin-top: 25px; border-top: 2px solid #ccc; padding-top: 15px; text-align: left; }
+        .ledger-box { max-height: 250px; overflow-y: auto; background: white; border-radius: 10px; padding: 10px; border: 1px solid #ccc; }
+        .ledger-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border-bottom: 1px solid #eee; }
+        .ledger-item:last-child { border-bottom: none; }
+        .ledger-details { display: flex; flex-direction: column; }
+        .ledger-memo { font-weight: bold; color: #333; font-size: 1.1rem; }
+        .ledger-date { font-size: 0.8rem; color: #888; margin-top: 2px; }
+        .ledger-amount { font-size: 1.2rem; font-weight: bold; }
+        .ledger-amount.deposit { color: #2e7d32; }
+        .ledger-amount.withdraw { color: #c62828; }
+
+        @media (max-width: 767px) { .dashboard-grid { grid-template-columns: 1fr; } .send-grid { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -259,23 +90,16 @@
     <div id="auth-screen"></div>
 
     <div id="dashboard">
-        <div id="btn-bank">$</div> <div class="header">DAD TRACKER</div>
+        <div id="btn-bank">$</div>
+        <div class="header">DAD TRACKER</div>
         
         <div class="dashboard-grid">
             <div class="module map-module" id="mod-sector">
                 <div class="map-header">
-                    <div>
-                        <div class="module-title" style="border:none; margin-bottom:0;">Dad's Status</div>
-                        <p class="status-text">Locating Dad</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <p class="sub-text">Loading...</p>
-                        <p class="date-text"></p>
-                    </div>
+                    <div><div class="module-title" style="border:none; margin-bottom:0;">Dad's Status</div><p class="status-text">Locating Dad</p></div>
+                    <div style="text-align: right;"><p class="sub-text">Loading...</p><p class="date-text"></p></div>
                 </div>
-                <div id="map-container">
-                    [ MAP PLACEHOLDER ]
-                </div>
+                <div id="map-container">[ MAP PLACEHOLDER ]</div>
             </div>
 
             <div class="module" id="mod-messages">
@@ -290,9 +114,7 @@
 
             <div class="module" id="mod-sleeps">
                 <div class="module-title">SLEEPS UNTIL...</div>
-                <ul class="sleeps-list" id="sleeps-list-container">
-                    <li><span class="event-name">Loading timer...</span></li>
-                </ul>
+                <ul class="sleeps-list" id="sleeps-list-container"><li><span class="event-name">Loading timer...</span></li></ul>
             </div>
 
             <div class="module" id="mod-postcard">
@@ -315,14 +137,12 @@
                     <h2 style="margin-top: 0; color: #005A9C;">Carter</h2>
                     <button class="push-btn" data-son="Carter" data-msg="Miss you dad!">Miss you dad!</button>
                     <button class="push-btn" data-son="Carter" data-msg="Good morning, Dad!">Good morning, Dad!</button>
-                    <button class="push-btn" data-son="Carter" data-msg="Good night, Dad!">Good night, Dad!</button>
                     <button class="push-btn" data-son="Carter" data-msg="Send us a new pic!">Send us a new pic!</button>
                 </div>
                 <div class="send-col">
                     <h2 style="margin-top: 0; color: #005A9C;">Barrett</h2>
                     <button class="push-btn" data-son="Barrett" data-msg="Miss you dad!">Miss you dad!</button>
                     <button class="push-btn" data-son="Barrett" data-msg="Good morning, Dad!">Good morning, Dad!</button>
-                    <button class="push-btn" data-son="Barrett" data-msg="Good night, Dad!">Good night, Dad!</button>
                     <button class="push-btn" data-son="Barrett" data-msg="Send us a new pic!">Send us a new pic!</button>
                 </div>
             </div>
@@ -337,8 +157,8 @@
                 <div id="bank-screen-select" class="bank-screen" style="display: block;">
                     <h1 class="bank-title">AXLEY VAULT</h1>
                     <p style="font-size: 1.2rem; margin-bottom: 30px;">Select your account:</p>
-                    <button class="bank-user-btn" onclick="selectBankUser('CARTER')">CARTER</button>
-                    <button class="bank-user-btn" onclick="selectBankUser('BARRETT')">BARRETT</button>
+                    <button class="bank-user-btn" onclick="selectBankUser('Carter')">Carter</button>
+                    <button class="bank-user-btn" onclick="selectBankUser('Barrett')">Barrett</button>
                 </div>
 
                 <div id="bank-screen-pin" class="bank-screen">
@@ -352,13 +172,21 @@
 
                 <div id="bank-screen-account" class="bank-screen">
                     <h1 class="bank-title" id="account-name-title">ACCOUNT</h1>
-                    <p style="font-size: 1.2rem; margin: 0; color: #666; text-transform: uppercase; font-weight: bold;">Current Balance</p>
-                    <div class="balance-display" id="account-balance">$0.00</div>
                     
-                    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
                         <button class="transaction-btn btn-withdraw" onclick="handleTransaction('withdraw')">- Withdraw</button>
                         <button class="transaction-btn btn-deposit" onclick="handleTransaction('deposit')">+ Deposit</button>
                     </div>
+
+                    <p style="font-size: 1.2rem; margin: 0; color: #666; text-transform: uppercase; font-weight: bold;">Current Balance</p>
+                    <div class="balance-display" id="account-balance">$0.00</div>
+                    
+                    <div class="ledger-container">
+                        <h3 style="margin: 0 0 10px 0; color: #555; text-transform: uppercase; font-size: 0.9rem;">Transaction History</h3>
+                        <div class="ledger-box" id="ledger-list">
+                            </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -369,304 +197,132 @@
         const SECRET_KEY = "CJ18BM20ltb";
         const urlParams = new URLSearchParams(window.location.search);
         const urlKey = urlParams.get('key');
-
         if (urlKey === SECRET_KEY) { localStorage.setItem('nightingaleAuth', SECRET_KEY); }
-
         if (localStorage.getItem('nightingaleAuth') === SECRET_KEY) {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-        } else {
-            document.body.innerHTML = "";
-            document.body.style.backgroundColor = "black";
-        }
+            document.getElementById('auth-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block';
+        } else { document.body.innerHTML = ""; document.body.style.backgroundColor = "black"; }
 
-        // --- 2. GOOGLE SHEET DATA FETCHING (Main Map) ---
+        // --- 2. GOOGLE SHEET MAP DATA ---
         const SHEET_ID = "1_n0RQwaGF_WxeujBq8Z04NG_ejzK71VhPa7YJE0WmM4";
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
-        const HOME_LAT = 35.3871741;
-        const HOME_LONG = -84.5345774;
+        const HOME_LAT = 35.3871741; const HOME_LONG = -84.5345774;
 
         function haversine(lat1, lon1, lat2, lon2) {
-            const R = 3958.8; 
-            const toRad = deg => deg * Math.PI / 180;
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return (R * c).toFixed(1); 
+            const R = 3958.8; const toRad = deg => deg * Math.PI / 180;
+            const a = Math.sin(toRad(lat2 - lat1)/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(toRad(lon2 - lon1)/2)**2;
+            return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1); 
         }
-
-        function convertSerialDate(serial) {
-            const epoch = new Date(1899, 11, 30); 
-            return new Date(epoch.getTime() + serial * 24 * 60 * 60 * 1000);
-        }
-
         function parseSheetDate(sheetValue) {
             if (!sheetValue) return null;
-            if (typeof sheetValue === "number") return convertSerialDate(sheetValue);
-            const [datePart, timePart] = sheetValue.split(" ");
-            if (!datePart || !timePart) return null;
-            const [month, day, year] = datePart.split("/").map(Number);
-            const [hours, minutes, seconds] = timePart.split(":").map(Number);
-            return new Date(year, month - 1, day, hours, minutes, seconds);
+            if (typeof sheetValue === "number") return new Date(new Date(1899, 11, 30).getTime() + sheetValue * 86400000);
+            const [d, t] = sheetValue.split(" "); if (!d || !t) return null;
+            const [m, day, y] = d.split("/").map(Number); const [hr, min, sec] = t.split(":").map(Number);
+            return new Date(y, m - 1, day, hr, min, sec);
         }
-
-        function formatUpdated(sheetValue) {
-            const d = parseSheetDate(sheetValue);
-            if (!d) return "N/A";
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const yesterday = new Date(today);
-            yesterday.setDate(today.getDate() - 1);
-            const updatedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-            if (updatedDate.getTime() === today.getTime()) {
-                const hours = d.getHours() % 12 || 12;
-                const minutes = d.getMinutes().toString().padStart(2, "0");
-                const ampm = d.getHours() >= 12 ? "PM" : "AM";
-                return `Today at ${hours}:${minutes} ${ampm}`;
-            } else if (updatedDate.getTime() === yesterday.getTime()) {
-                return "Yesterday";
-            } else {
-                const diffTime = today - updatedDate;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-            }
+        function formatUpdated(v) {
+            const d = parseSheetDate(v); if (!d) return "N/A";
+            const today = new Date(new Date().setHours(0,0,0,0)), updatedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            if (updatedDate.getTime() === today.getTime()) return `Today at ${d.getHours()%12||12}:${d.getMinutes().toString().padStart(2,"0")} ${d.getHours()>=12?"PM":"AM"}`;
+            return updatedDate.getTime() === today.getTime() - 86400000 ? "Yesterday" : `${Math.floor((today - updatedDate)/86400000)} days ago`;
         }
-
         function loadData() {
-            fetch(SHEET_URL)
-                .then(res => res.text())
-                .then(text => {
-                    const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
-                    const table = JSON.parse(jsonText).table;
-                    const headers = table.cols.map(c => c.label);
-                    const values = table.rows[0].c;
+            fetch(SHEET_URL).then(res => res.text()).then(text => {
+                const table = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1]).table;
+                const row = {}; table.cols.map(c => c.label).forEach((h, i) => row[h] = (table.rows[0].c[i] && table.rows[0].c[i].v) ? table.rows[0].c[i].v : "");
+                const mc = document.getElementById('map-container'), ss = document.querySelector('#mod-sector .status-text'), sd = document.querySelector('#mod-sector .date-text'), ssub = document.querySelector('#mod-sector .sub-text');
+                mc.innerHTML = ""; sd.innerText = "Updated: " + formatUpdated(row.updated);
 
-                    const row = {};
-                    headers.forEach((h, i) => row[h] = (values[i] && values[i].v) ? values[i].v : "");
-
-                    const mapContainer = document.getElementById('map-container');
-                    const sectorStatus = document.querySelector('#mod-sector .status-text');
-                    const sectorDate = document.querySelector('#mod-sector .date-text');
-                    const sectorSub = document.querySelector('#mod-sector .sub-text');
-
-                    mapContainer.innerHTML = "";
-                    sectorDate.innerText = "Updated: " + formatUpdated(row.updated);
-
-                    if (row.mode === "FLYING" && row.flight_id) {
-                        mapContainer.style.display = 'flex';
-                        sectorStatus.innerText = "In the Air";
-                        sectorSub.innerText = "Flight: " + row.flight_id;
-                        sectorStatus.style.color = "#000080"; 
-
-                        const iframe = document.createElement("iframe");
-                        iframe.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`;
-                        iframe.style.width = "100%"; iframe.style.height = "100%"; iframe.style.border = "none";
-                        mapContainer.appendChild(iframe);
-                    } else if (row.mode === "GROUND" || row.mode === "Landed") {
-                        mapContainer.style.display = 'flex';
-                        const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
-
-                        sectorStatus.innerText = "On the Ground";
-                        sectorSub.innerHTML = `In ${row.city}, ${row.state} (${distance} miles away)`;
-                        sectorStatus.style.color = "#355E3B"; 
-
-                        const mapDiv = document.createElement("div");
-                        mapDiv.id = "map"; mapDiv.style.width = "100%"; mapDiv.style.height = "100%";
-                        mapContainer.appendChild(mapDiv);
-
-                        const map = L.map('map', {zoomControl: false, attributionControl: false});
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
-
-                        L.marker([row.dad_lat, row.dad_long]).addTo(map).bindPopup("Dad").openPopup();
-                        L.marker([HOME_LAT, HOME_LONG]).addTo(map).bindPopup("Home").openPopup();
-                        L.polyline([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]], {color: 'blue'}).addTo(map);
-
-                        const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
-                        map.fitBounds(dadHomeBounds, {padding: [40, 40], maxZoom: 7});
-                    } else if (row.mode === "HOME") {
-                        mapContainer.style.display = 'none'; 
-                        sectorStatus.innerText = "Home";
-                        sectorSub.innerText = "Safe and sound."; 
-                        sectorStatus.style.color = "#333"; 
-                    }
-                })
-                .catch(err => console.error("Error fetching map data:", err));
+                if (row.mode === "FLYING" && row.flight_id) {
+                    mc.style.display = 'flex'; ss.innerText = "In the Air"; ssub.innerText = "Flight: " + row.flight_id; ss.style.color = "#000080"; 
+                    const ifm = document.createElement("iframe"); ifm.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`; ifm.style = "width:100%;height:100%;border:none;"; mc.appendChild(ifm);
+                } else if (row.mode === "GROUND" || row.mode === "Landed") {
+                    mc.style.display = 'flex'; ss.innerText = "On the Ground"; ssub.innerHTML = `In ${row.city}, ${row.state} (${haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long)} miles away)`; ss.style.color = "#355E3B"; 
+                    const mDiv = document.createElement("div"); mDiv.id = "map"; mDiv.style = "width:100%;height:100%;"; mc.appendChild(mDiv);
+                    const map = L.map('map', {zoomControl: false, attributionControl: false}); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
+                    L.marker([row.dad_lat, row.dad_long]).addTo(map).bindPopup("Dad").openPopup(); L.marker([HOME_LAT, HOME_LONG]).addTo(map).bindPopup("Home").openPopup();
+                    L.polyline([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]], {color: 'blue'}).addTo(map);
+                    map.fitBounds(L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]), {padding: [40, 40], maxZoom: 7});
+                } else if (row.mode === "HOME") { mc.style.display = 'none'; ss.innerText = "Home"; ssub.innerText = "Safe and sound."; ss.style.color = "#333"; }
+            }).catch(e => console.error(e));
         }
-
         loadData(); setInterval(loadData, 60000);
 
-        // --- 3. COUNTDOWN TIMERS FETCHING ---
-        const SLEEPS_SHEET_ID = "1hTgmLdIhX1tVZbI2YB1tExCTreIAgHSqN8i31zURNkg";
-        const SLEEPS_URL = `https://docs.google.com/spreadsheets/d/${SLEEPS_SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
-
-        function calculateSleeps(targetDateStr) {
-            const today = new Date(); today.setHours(0, 0, 0, 0);
-            const target = new Date(targetDateStr); target.setHours(0, 0, 0, 0);
-            return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-        }
-
+        // --- 3. SLEEPS TIMERS ---
+        const SLEEPS_URL = `https://docs.google.com/spreadsheets/d/1hTgmLdIhX1tVZbI2YB1tExCTreIAgHSqN8i31zURNkg/gviz/tq?tqx=out:json&headers=1`;
         function loadSleeps() {
             fetch(SLEEPS_URL).then(res => res.text()).then(text => {
-                const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
-                const table = JSON.parse(jsonText).table;
-                const container = document.getElementById('sleeps-list-container');
-                container.innerHTML = ""; 
-
-                table.rows.forEach(row => {
-                    const eventName = (row.c[0] && row.c[0].v) ? row.c[0].v : "";
-                    const dateValue = (row.c[1]) ? (row.c[1].f || row.c[1].v) : null;
-
-                    if (eventName && dateValue) {
-                        let parsedDate = null;
-                        if (typeof dateValue === 'string' && dateValue.startsWith('Date')) {
-                            let parts = dateValue.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
-                            if (parts) parsedDate = new Date(parts[1], parts[2], parts[3]);
-                        } else if (typeof dateValue === 'number') {
-                            parsedDate = convertSerialDate(dateValue);
-                        } else { parsedDate = new Date(dateValue); }
-                        
-                        if (parsedDate && !isNaN(parsedDate)) {
-                            const sleeps = calculateSleeps(parsedDate);
-                            if (sleeps >= 0) {
+                const table = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1]).table;
+                const cont = document.getElementById('sleeps-list-container'); cont.innerHTML = ""; 
+                table.rows.forEach(r => {
+                    const ev = (r.c[0] && r.c[0].v) ? r.c[0].v : "", dv = (r.c[1]) ? (r.c[1].f || r.c[1].v) : null;
+                    if (ev && dv) {
+                        let pd = null;
+                        if (typeof dv === 'string' && dv.startsWith('Date')) { const p = dv.match(/Date\((\d+),\s*(\d+),\s*(\d+)/); if(p) pd = new Date(p[1], p[2], p[3]); }
+                        else if (typeof dv === 'number') pd = new Date(new Date(1899, 11, 30).getTime() + dv * 86400000); else pd = new Date(dv);
+                        if (pd && !isNaN(pd)) {
+                            const slp = Math.ceil((new Date(pd).setHours(0,0,0,0) - new Date().setHours(0,0,0,0)) / 86400000);
+                            if (slp >= 0) {
                                 const li = document.createElement('li');
-                                if (sleeps === 0) {
-                                    li.classList.add('today-row');
-                                    li.innerHTML = `<span class="event-name">${eventName}</span><span class="sleep-number today-text">TODAY! 🎉</span>`;
-                                } else {
-                                    li.innerHTML = `<span class="event-name">${eventName}</span><span class="sleep-number">${sleeps}</span>`;
-                                }
-                                container.appendChild(li);
+                                if (slp === 0) { li.classList.add('today-row'); li.innerHTML = `<span class="event-name">${ev}</span><span class="sleep-number today-text">TODAY! 🎉</span>`; } 
+                                else { li.innerHTML = `<span class="event-name">${ev}</span><span class="sleep-number">${slp}</span>`; }
+                                cont.appendChild(li);
                             }
                         }
                     }
                 });
-                if (container.innerHTML === "") container.innerHTML = '<li><span class="event-name">No upcoming events</span></li>';
-            }).catch(err => { document.getElementById('sleeps-list-container').innerHTML = '<li><span class="event-name" style="color:red;">Connection error.</span></li>'; });
+                if (cont.innerHTML === "") cont.innerHTML = '<li><span class="event-name">No upcoming events</span></li>';
+            }).catch(e => document.getElementById('sleeps-list-container').innerHTML = '<li><span class="event-name" style="color:red;">Connection error.</span></li>');
         }
-
         loadSleeps(); setInterval(loadSleeps, 3600000);
 
-        // --- 4. MESSAGE BOARD & PUSH NOTIFICATIONS ---
+        // --- 4. MESSAGE & NTFY ---
         const MESSAGE_CSV_URL = `https://docs.google.com/spreadsheets/d/1ALWIcL9eQV7SEoXm0xoP9lz_1XfhtLmJAUZtm4Pn6ig/gviz/tq?tqx=out:csv&headers=0`;
         const NTFY_TOPIC = "dad_trackeralertsnotify__44";
-
+        function notifyDad(son, act) { fetch(`https://ntfy.sh/${NTFY_TOPIC}`, { method:'POST', body:`${son} ${act||"just read your message!"}`, headers:{'Title':'Dad Tracker Alert', 'Tags':'airplane'} }); }
+        
         function loadMessage() {
             fetch(MESSAGE_CSV_URL).then(res => res.text()).then(text => {
-                const cleanMessage = text.replace(/^"|"$/g, '').trim();
-                const msgElement = document.getElementById('message-text');
-                const storedMessage = localStorage.getItem('dashboardMessage');
-                const btnContainer = document.querySelector('.btn-container');
-                const btnCarter = document.getElementById('btn-carter');
-                const btnBarrett = document.getElementById('btn-barrett');
-
-                function resetButtons() {
-                    btnCarter.classList.remove('seen'); btnCarter.innerText = 'Carter'; localStorage.setItem('carterSeen', 'false');
-                    btnBarrett.classList.remove('seen'); btnBarrett.innerText = 'Barrett'; localStorage.setItem('barrettSeen', 'false');
-                }
-                function restoreButtons() {
-                    if (localStorage.getItem('carterSeen') === 'true') { btnCarter.classList.add('seen'); btnCarter.innerText = '✔ Carter'; }
-                    if (localStorage.getItem('barrettSeen') === 'true') { btnBarrett.classList.add('seen'); btnBarrett.innerText = '✔ Barrett'; }
-                }
-
-                if (cleanMessage !== storedMessage && cleanMessage !== "") {
-                    msgElement.innerText = cleanMessage; btnContainer.style.display = 'flex'; localStorage.setItem('dashboardMessage', cleanMessage); resetButtons(); 
-                } else if (cleanMessage === storedMessage && cleanMessage !== "") {
-                    msgElement.innerText = cleanMessage; btnContainer.style.display = 'flex'; restoreButtons(); 
-                } else if (cleanMessage === "") {
-                    msgElement.innerText = "No new messages..."; btnContainer.style.display = 'none';
-                    if (storedMessage !== "") { localStorage.setItem('dashboardMessage', ""); resetButtons(); }
-                }
-            }).catch(err => {
-                document.getElementById('message-text').innerText = "No new messages..."; document.querySelector('.btn-container').style.display = 'none';
-            });
+                const cm = text.replace(/^"|"$/g, '').trim(), sm = localStorage.getItem('dashboardMessage'), bc = document.querySelector('.btn-container');
+                const rb = () => { ['carter','barrett'].forEach(n => { const b = document.getElementById(`btn-${n}`); b.classList.remove('seen'); b.innerText = n.charAt(0).toUpperCase()+n.slice(1); localStorage.setItem(`${n}Seen`,'false'); }); }
+                const resb = () => { ['carter','barrett'].forEach(n => { if(localStorage.getItem(`${n}Seen`)==='true'){ const b=document.getElementById(`btn-${n}`); b.classList.add('seen'); b.innerText = '✔ '+n.charAt(0).toUpperCase()+n.slice(1); } }); }
+                if (cm !== sm && cm !== "") { document.getElementById('message-text').innerText = cm; bc.style.display = 'flex'; localStorage.setItem('dashboardMessage', cm); rb(); } 
+                else if (cm === sm && cm !== "") { document.getElementById('message-text').innerText = cm; bc.style.display = 'flex'; resb(); } 
+                else if (cm === "") { document.getElementById('message-text').innerText = "No new messages..."; bc.style.display = 'none'; if (sm !== "") { localStorage.setItem('dashboardMessage', ""); rb(); } }
+            }).catch(e => { document.getElementById('message-text').innerText = "No new messages..."; document.querySelector('.btn-container').style.display = 'none'; });
         }
-
-        function notifyDad(sonName, customAction) {
-            const actionText = customAction || "just read your message on the dashboard!";
-            fetch(`https://ntfy.sh/${NTFY_TOPIC}`, { method: 'POST', body: `${sonName} ${actionText}`, headers: { 'Title': 'Dad Tracker Alert', 'Tags': 'airplane' } });
-        }
-
-        document.getElementById('btn-carter').addEventListener('click', function() {
-            if (!this.classList.contains('seen')) { this.classList.add('seen'); this.innerText = '✔ Carter'; localStorage.setItem('carterSeen', 'true'); notifyDad('Carter'); }
-        });
-        document.getElementById('btn-barrett').addEventListener('click', function() {
-            if (!this.classList.contains('seen')) { this.classList.add('seen'); this.innerText = '✔ Barrett'; localStorage.setItem('barrettSeen', 'true'); notifyDad('Barrett'); }
-        });
-
-        document.querySelectorAll('.push-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const son = this.getAttribute('data-son'); const msg = this.getAttribute('data-msg'); notifyDad(son, `says: "${msg}"`);
-                const originalText = this.innerText; const originalBg = this.style.backgroundColor; const originalColor = this.style.color;
-                this.innerText = '✔ Sent!'; this.style.backgroundColor = '#4CAF50'; this.style.color = 'white';
-                setTimeout(function() { btn.innerText = originalText; btn.style.backgroundColor = originalBg; btn.style.color = originalColor; document.getElementById('send-view').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; }, 2000);
-            });
-        });
-
+        ['carter','barrett'].forEach(n => { document.getElementById(`btn-${n}`).addEventListener('click', function() { if(!this.classList.contains('seen')){ this.classList.add('seen'); this.innerText = '✔ '+n.charAt(0).toUpperCase()+n.slice(1); localStorage.setItem(`${n}Seen`, 'true'); notifyDad(n.charAt(0).toUpperCase()+n.slice(1)); } }); });
+        document.querySelectorAll('.push-btn').forEach(b => { b.addEventListener('click', function() { notifyDad(this.getAttribute('data-son'), `says: "${this.getAttribute('data-msg')}"`); const ot=this.innerText,obg=this.style.backgroundColor,oc=this.style.color; this.innerText='✔ Sent!'; this.style.backgroundColor='#4CAF50'; this.style.color='white'; setTimeout(()=>{ this.innerText=ot;this.style.backgroundColor=obg;this.style.color=oc; document.getElementById('send-view').style.display='none'; document.getElementById('dashboard').style.display='block'; }, 2000); }); });
         loadMessage(); setInterval(loadMessage, 60000);
 
-        // --- 5. POSTCARD AUTO-PULL ---
+        // --- 5. POSTCARD ---
         const POSTCARD_WEB_APP = "https://script.google.com/macros/s/AKfycbwGK-qpY-f36QDunT-n7cJhJQnjyOC_wCof_eHH7If2tGRrwe9dcnk-euAQa3GmX1MQoQ/exec";
-
-        function loadPostcard() {
-            fetch(POSTCARD_WEB_APP).then(res => res.text()).then(fileId => {
-                const imgElement = document.getElementById('postcard-img');
-                const placeholder = document.getElementById('postcard-placeholder');
-                const currentId = localStorage.getItem('postcardId');
-
-                if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.getAttribute('src') === "")) {
-                    imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
-                    imgElement.onload = function() { imgElement.style.display = 'block'; placeholder.style.display = 'none'; };
-                    localStorage.setItem('postcardId', fileId);
-                }
-            }).catch(err => console.error("Error fetching postcard:", err));
-        }
-
+        function loadPostcard() { fetch(POSTCARD_WEB_APP).then(res => res.text()).then(id => { const img = document.getElementById('postcard-img'), ph = document.getElementById('postcard-placeholder'); if (id !== "NO_FILES" && (id !== localStorage.getItem('postcardId') || img.getAttribute('src') === "")) { img.src = `https://drive.google.com/thumbnail?id=${id}&sz=w800`; img.onload = () => { img.style.display = 'block'; ph.style.display = 'none'; }; localStorage.setItem('postcardId', id); } }).catch(e => console.log(e)); }
         loadPostcard(); setInterval(loadPostcard, 60000);
 
-        // --- 6. OVERLAY NAVIGATION LOGIC ---
-        document.getElementById('btn-open-send').addEventListener('click', function() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('send-view').style.display = 'block';
-        });
-
-        // Universal Back Buttons for Overlays
-        document.querySelectorAll('.btn-close-overlay').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.overlay-view').forEach(view => view.style.display = 'none');
-                document.getElementById('dashboard').style.display = 'block';
-            });
-        });
+        // --- 6. OVERLAYS ---
+        document.getElementById('btn-open-send').addEventListener('click', () => { document.getElementById('dashboard').style.display = 'none'; document.getElementById('send-view').style.display = 'block'; });
+        document.querySelectorAll('.btn-close-overlay').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.overlay-view').forEach(v => v.style.display = 'none'); document.getElementById('dashboard').style.display = 'block'; }));
 
         // --- 7. THE CLOUD BANK LOGIC ---
         
         // PASTE YOUR NEW APPS SCRIPT WEB APP URL HERE:
         const BANK_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzORkcipcKFmRpxdkET8MGnhDg8i09IdMLIUiUB_pV4htzJ-5eaMRET6qsrfymHmdWE/exec";
         
-        // ** YOU CAN CHANGE THEIR PIN CODES RIGHT HERE **
-        const PIN_CODES = {
-            'Carter': '0412',
-            'Barrett': '0711'
-        };
-
+        const PIN_CODES = { 'Carter': '0412', 'Barrett': '0711' };
         let currentBankUser = '';
-        let cloudBalances = { 'Carter': 0.00, 'Barrett': 0.00 };
+        let cloudData = { balances: { 'Carter': 0.00, 'Barrett': 0.00 }, ledger: [] };
 
-        // Fetch balances quietly in the background when the dashboard loads
-        function fetchCloudBalances() {
+        // Fetch both balances AND the ledger history
+        function fetchCloudData() {
+            if(BANK_WEB_APP_URL === "YOUR_NEW_APPS_SCRIPT_URL_HERE") return;
             fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime(), { redirect: 'follow' })
                 .then(res => res.json())
-                .then(data => { cloudBalances = data; })
+                .then(data => { cloudData = data; })
                 .catch(err => console.log("Bank sync error", err));
         }
-        
-        // Run once immediately, then check for new balances every minute
-        fetchCloudBalances();
-        setInterval(fetchCloudBalances, 60000); 
+        fetchCloudData(); setInterval(fetchCloudData, 60000); 
 
-        // Open the Vault
-        document.getElementById('btn-bank').addEventListener('click', function() {
+        document.getElementById('btn-bank').addEventListener('click', () => {
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('bank-view').style.display = 'block';
             showBankScreen('bank-screen-select');
@@ -677,79 +333,98 @@
             document.getElementById(screenId).style.display = 'block';
         }
 
-        // When a name is tapped
         function selectBankUser(name) {
-            // THE MAGIC LINE: This forces the name to be exactly "Carter" or "Barrett" 
-            // behind the scenes, no matter how it is typed in your HTML buttons!
             currentBankUser = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-            
             document.getElementById('pin-prompt-name').innerText = `HELLO, ${currentBankUser.toUpperCase()}.`;
             document.getElementById('pin-input').value = ''; 
             document.getElementById('pin-error').style.display = 'none';
             showBankScreen('bank-screen-pin');
         }
 
-        // When they hit UNLOCK
         function checkPin() {
-            const enteredPin = document.getElementById('pin-input').value;
-            const correctPin = PIN_CODES[currentBankUser];
-
-            if (enteredPin === correctPin) {
-                // .toUpperCase() makes it "CARTER'S VAULT" on the screen!
+            if (document.getElementById('pin-input').value === PIN_CODES[currentBankUser]) {
                 document.getElementById('account-name-title').innerText = `${currentBankUser.toUpperCase()}'S VAULT`;
-                updateBalanceDisplay();
+                updateDisplay();
                 showBankScreen('bank-screen-account');
             } else {
                 document.getElementById('pin-error').style.display = 'block';
                 document.getElementById('pin-input').value = '';
             }
         }
-        // Format and show the balance from the Cloud
-        function updateBalanceDisplay() {
-            const currentBal = cloudBalances[currentBankUser];
+
+        function updateDisplay() {
+            // Update Balance Number
+            const currentBal = cloudData.balances[currentBankUser];
             document.getElementById('account-balance').innerText = `$${currentBal.toFixed(2)}`;
+
+            // Update Ledger List
+            const ledgerList = document.getElementById('ledger-list');
+            ledgerList.innerHTML = ""; // Clear old data
+
+            // Filter history for just this boy, and reverse it so the newest is at the top!
+            const userHistory = cloudData.ledger.filter(entry => entry.name === currentBankUser).reverse();
+
+            if (userHistory.length === 0) {
+                ledgerList.innerHTML = "<p style='color: #888; padding: 10px; text-align: center;'>No transactions yet!</p>";
+            } else {
+                userHistory.forEach(entry => {
+                    const item = document.createElement('div');
+                    item.className = 'ledger-item';
+                    
+                    const amountClass = entry.type === 'deposit' ? 'deposit' : 'withdraw';
+                    const amountSign = entry.type === 'deposit' ? '+' : '-';
+                    
+                    item.innerHTML = `
+                        <div class="ledger-details">
+                            <span class="ledger-memo">${entry.memo}</span>
+                            <span class="ledger-date">${entry.date}</span>
+                        </div>
+                        <span class="ledger-amount ${amountClass}">${amountSign}$${parseFloat(entry.amount).toFixed(2)}</span>
+                    `;
+                    ledgerList.appendChild(item);
+                });
+            }
         }
 
-        // Handle Deposit / Withdraw
         function handleTransaction(type) {
             const verb = type === 'deposit' ? 'deposit' : 'withdraw';
             const amountStr = prompt(`How much cash do you want to ${verb}?\n(Example: 5.00)`);
-            
             if (amountStr === null || amountStr === "") return;
 
             const amount = parseFloat(amountStr);
-            if (isNaN(amount) || amount <= 0) {
-                alert("Oops! Please enter a valid number.");
-                return;
+            if (isNaN(amount) || amount <= 0) { alert("Oops! Please enter a valid number."); return; }
+
+            let currentBal = cloudData.balances[currentBankUser];
+
+            if (type === 'withdraw' && amount > currentBal) {
+                alert("Insufficient funds! You can't withdraw more than you have."); return;
             }
 
-            let currentBal = cloudBalances[currentBankUser];
+            // NEW: Prompt for the memo!
+            let memo = prompt("What is this for?\n(Example: Chores, Birthday, Bought a toy)");
+            if (memo === null || memo.trim() === "") memo = "ATM Transaction"; // Default if they leave it blank
 
-            if (type === 'deposit') {
-                currentBal += amount;
-            } else if (type === 'withdraw') {
-                if (amount > currentBal) {
-                    alert("Insufficient funds! You can't withdraw more than you have.");
-                    return;
-                }
-                currentBal -= amount;
-            }
+            // Calculate new balance locally so the screen updates immediately
+            if (type === 'deposit') currentBal += amount;
+            else if (type === 'withdraw') currentBal -= amount;
 
-            // Visual feedback so they know it's saving to the cloud
             document.getElementById('account-balance').innerText = "Syncing...";
 
-            // Send the new math to Google Sheets
-            fetch(BANK_WEB_APP_URL + `?action=update&name=${currentBankUser}&balance=${currentBal}`, { redirect: 'follow' })
+            // Send amount AND memo to the Google Sheet
+            fetch(BANK_WEB_APP_URL + `?action=update&name=${currentBankUser}&balance=${currentBal}&type=${type}&amount=${amount}&memo=${encodeURIComponent(memo)}`, { redirect: 'follow' })
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {
-                        cloudBalances[currentBankUser] = data.balance;
-                        updateBalanceDisplay();
+                        // Force a fresh pull of all data so the new receipt shows up instantly
+                        fetchCloudData();
+                        
+                        // Fake a tiny delay so they can see the "Syncing..." message before it updates
+                        setTimeout(() => { updateDisplay(); }, 1000); 
                     }
                 })
                 .catch(err => {
                     alert("Network error. Could not reach the bank!");
-                    updateBalanceDisplay(); // Reset text if it failed
+                    updateDisplay();
                 });
         }
     </script>
