@@ -679,9 +679,11 @@
 
         // When a name is tapped
         function selectBankUser(name) {
-            currentBankUser = name;
-            // .toUpperCase() makes it "HELLO, CARTER." on the screen!
-            document.getElementById('pin-prompt-name').innerText = `HELLO, ${name.toUpperCase()}.`;
+            // THE MAGIC LINE: This forces the name to be exactly "Carter" or "Barrett" 
+            // behind the scenes, no matter how it is typed in your HTML buttons!
+            currentBankUser = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+            
+            document.getElementById('pin-prompt-name').innerText = `HELLO, ${currentBankUser.toUpperCase()}.`;
             document.getElementById('pin-input').value = ''; 
             document.getElementById('pin-error').style.display = 'none';
             showBankScreen('bank-screen-pin');
