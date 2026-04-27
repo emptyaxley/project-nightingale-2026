@@ -653,9 +653,7 @@
 
         // Fetch balances quietly in the background when the dashboard loads
         function fetchCloudBalances() {
-            
-            // We add a timestamp to the URL so the iPad doesn't accidentally use a cached version
-            fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime())
+            fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime(), { redirect: 'follow' })
                 .then(res => res.json())
                 .then(data => { cloudBalances = data; })
                 .catch(err => console.log("Bank sync error", err));
@@ -736,7 +734,7 @@
             document.getElementById('account-balance').innerText = "Syncing...";
 
             // Send the new math to Google Sheets
-            fetch(BANK_WEB_APP_URL + `?action=update&name=${currentBankUser}&balance=${currentBal}`)
+            fetch(BANK_WEB_APP_URL + `?action=update&name=${currentBankUser}&balance=${currentBal}`, { redirect: 'follow' })
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {
