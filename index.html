@@ -14,7 +14,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #1e293b; /* A dark slate background to make the grey modules pop */
+            background-color: #1e293b; 
             color: #333;
             overflow-x: hidden;
         }
@@ -29,6 +29,28 @@
             position: relative;
         }
 
+        /* The New ATM Button */
+        #btn-bank {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #2e7d32;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 3000;
+            transition: transform 0.2s;
+        }
+        #btn-bank:active { transform: scale(0.9); }
+
         /* Dashboard Header */
         .header {
             text-align: center;
@@ -42,7 +64,7 @@
             margin: 0 auto 20px auto;
         }
 
-        /* --- THE NEW GRID LAYOUT --- */
+        /* --- GRID LAYOUT --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -51,9 +73,8 @@
             margin: 0 auto;
         }
 
-        /* Module Styling */
         .module {
-            background: #e1e6eb; /* Solid cool grey (removed transparency for older iPad performance) */
+            background: #e1e6eb; 
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.25);
@@ -61,14 +82,12 @@
             flex-direction: column;
         }
 
-        /* The Map Module spans all 3 columns */
         .map-module {
             grid-column: 1 / -1;
-            padding: 0; /* Remove padding so map can go edge-to-edge */
+            padding: 0; 
             overflow: hidden;
         }
 
-        /* The new Status Header inside the Map module */
         .map-header {
             padding: 15px 25px;
             background: #e1e6eb;
@@ -80,7 +99,7 @@
 
         #map-container {
             width: 100%;
-            height: 400px; /* Fixed height for the map */
+            height: 400px; 
             background-color: #a3c9a8; 
             display: flex;
             align-items: center;
@@ -100,12 +119,11 @@
             padding-bottom: 5px;
         }
 
-        /* Specific Module Layouts */
         .status-text { font-size: 2rem; font-weight: 800; color: #005A9C; margin: 0; }
         .sub-text { font-size: 1rem; color: #555; margin: 0; }
         .date-text { font-size: 0.85rem; color: #666; font-style: italic; margin: 5px 0 0 0; }
 
-        /* Polaroid Styling */
+        /* Polaroid Styling (Square Ratio) */
         .polaroid {
             background: white;
             padding: 10px 10px 30px 10px;
@@ -115,14 +133,12 @@
             transform: rotate(-2deg);
             margin-top: auto; 
         }
-        
-        /* This forces both the image and the grey placeholder to be perfect squares */
         .polaroid img, #postcard-placeholder { 
             width: 100%; 
             aspect-ratio: 1 / 1; 
             object-fit: cover; 
             background: #ddd; 
-            border-radius: 2px; /* Adds a tiny, realistic softening to the photo edges */
+            border-radius: 2px;
         }
 
         /* Buttons */
@@ -163,35 +179,17 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed #ccc;
-            padding: 8px 10px; /* Added slight padding for the row highlights */
+            padding: 8px 10px; 
         }
         .sleeps-list li:last-child { border-bottom: none; }
         .event-name { font-weight: 600; color: #333; }
+        .sleep-number { font-weight: bold; color: #333; font-size: 1.4rem; background: #eaeff4; padding: 2px 10px; border-radius: 8px; }
         
-        /* Normal Number Pill */
-        .sleep-number { 
-            font-weight: bold; 
-            color: #333; /* Changed to black */
-            font-size: 1.4rem; 
-            background: #eaeff4; /* Cool grey background */
-            padding: 2px 10px; 
-            border-radius: 8px; 
-        }
+        .today-row { background-color: #e8f5e9; border-bottom: none !important; border-radius: 8px; box-shadow: inset 0 0 5px rgba(46, 125, 50, 0.1); }
+        .today-text { color: #2e7d32; background: #c8e6c9; }
 
-        /* The "TODAY!" Styles */
-        .today-row {
-            background-color: #e8f5e9; /* Light green row highlight */
-            border-bottom: none !important;
-            border-radius: 8px;
-            box-shadow: inset 0 0 5px rgba(46, 125, 50, 0.1); /* Subtle inner glow */
-        }
-        .today-text {
-            color: #2e7d32; /* Deep green text */
-            background: #c8e6c9; /* Slightly darker green pill */
-        }
-
-        /* --- THE NEW SEND MESSAGE VIEW --- */
-        #send-view {
+        /* --- OVERLAY VIEWS (Send Msg & Bank) --- */
+        .overlay-view {
             display: none; 
             position: fixed; 
             top: 0; left: 0; 
@@ -203,46 +201,53 @@
             overflow-y: auto;
         }
 
-        .send-grid {
-            display: flex; 
-            gap: 20px; 
-            max-width: 900px; 
-            margin: 20px auto 0 auto;
-        }
+        .send-grid { display: flex; gap: 20px; max-width: 900px; margin: 20px auto 0 auto; }
+        .send-col { flex: 1; background: #e1e6eb; border-radius: 15px; padding: 20px; text-align: center; }
+        .push-btn { display: block; width: 100%; padding: 20px 15px; margin-bottom: 15px; background: white; border: 2px solid #ccc; border-radius: 10px; font-size: 1.2rem; font-weight: bold; color: #333; cursor: pointer; }
+        
+        .back-btn { background: #d0d5da; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
 
-        .send-col {
-            flex: 1; 
-            background: #e1e6eb; 
-            border-radius: 15px; 
-            padding: 20px; 
+        /* --- THE BANK ATM STYLES --- */
+        .bank-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #e1e6eb;
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .bank-screen { display: none; }
+        .bank-title { font-size: 2rem; font-weight: 900; color: #2e7d32; margin-top: 0; margin-bottom: 20px; }
+        
+        .bank-user-btn {
+            display: block; width: 100%; padding: 20px; margin-bottom: 15px;
+            background: white; border: 3px solid #2e7d32; border-radius: 15px;
+            font-size: 1.5rem; font-weight: bold; color: #2e7d32; cursor: pointer;
+        }
+        
+        .pin-input {
+            width: 80%; padding: 15px; font-size: 2rem; text-align: center;
+            letter-spacing: 10px; border-radius: 10px; border: 2px solid #ccc; margin-bottom: 20px;
+        }
+        .submit-pin-btn {
+            padding: 15px 40px; font-size: 1.2rem; background: #2e7d32; color: white;
+            border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
         }
 
-        .push-btn {
-            display: block; 
-            width: 100%; 
-            padding: 20px 15px; 
-            margin-bottom: 15px;
-            background: white; 
-            border: 2px solid #ccc; 
-            border-radius: 10px;
-            font-size: 1.2rem; 
-            font-weight: bold; 
-            color: #333;
-            cursor: pointer;
+        .balance-display {
+            font-size: 3.5rem; font-weight: 900; color: #333;
+            background: #fff; padding: 20px; border-radius: 15px;
+            margin: 20px 0; border: 4px solid #eaeff4;
         }
-
-        #btn-cancel-send {
-            background: #d0d5da;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 20px;
+        
+        .transaction-btn {
+            width: 48%; padding: 20px; font-size: 1.5rem; font-weight: bold;
+            border: none; border-radius: 10px; cursor: pointer; color: white; display: inline-block;
         }
+        .btn-deposit { background-color: #2e7d32; }
+        .btn-withdraw { background-color: #c62828; }
 
-        /* Mobile Adjustments */
         @media (max-width: 767px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .send-grid { flex-direction: column; }
@@ -254,10 +259,9 @@
     <div id="auth-screen"></div>
 
     <div id="dashboard">
-        <div class="header">DAD TRACKER</div>
+        <div id="btn-bank">$</div> <div class="header">DAD TRACKER</div>
         
         <div class="dashboard-grid">
-            
             <div class="module map-module" id="mod-sector">
                 <div class="map-header">
                     <div>
@@ -299,15 +303,13 @@
                     <p style="margin-top: 10px;">Wish you were here!</p>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <div id="send-view">
+    <div id="send-view" class="overlay-view">
         <div style="max-width: 900px; margin: 0 auto;">
-            <button id="btn-cancel-send">← Back to Dashboard</button>
+            <button class="back-btn btn-close-overlay">← Back to Dashboard</button>
             <div class="header" style="margin: 0 auto;">SEND DAD A PING</div>
-            
             <div class="send-grid">
                 <div class="send-col">
                     <h2 style="margin-top: 0; color: #005A9C;">Carter</h2>
@@ -315,7 +317,6 @@
                     <button class="push-btn" data-son="Carter" data-msg="Good morning, Dad!">Good morning, Dad!</button>
                     <button class="push-btn" data-son="Carter" data-msg="Send us a new pic!">Send us a new pic!</button>
                 </div>
-                
                 <div class="send-col">
                     <h2 style="margin-top: 0; color: #005A9C;">Barrett</h2>
                     <button class="push-btn" data-son="Barrett" data-msg="Miss you dad!">Miss you dad!</button>
@@ -326,16 +327,48 @@
         </div>
     </div>
 
+    <div id="bank-view" class="overlay-view">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <button class="back-btn btn-close-overlay">← Back to Dashboard</button>
+            
+            <div class="bank-container">
+                <div id="bank-screen-select" class="bank-screen" style="display: block;">
+                    <h1 class="bank-title">AXLEY VAULT</h1>
+                    <p style="font-size: 1.2rem; margin-bottom: 30px;">Select your account:</p>
+                    <button class="bank-user-btn" onclick="selectBankUser('Carter')">Carter</button>
+                    <button class="bank-user-btn" onclick="selectBankUser('Barrett')">Barrett</button>
+                </div>
+
+                <div id="bank-screen-pin" class="bank-screen">
+                    <h1 class="bank-title">ENTER PIN</h1>
+                    <p id="pin-prompt-name" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+                    <input type="password" id="pin-input" class="pin-input" inputmode="numeric" maxlength="4" placeholder="••••">
+                    <br>
+                    <button class="submit-pin-btn" onclick="checkPin()">UNLOCK</button>
+                    <p id="pin-error" style="color: red; font-weight: bold; display: none;">Incorrect PIN. Try again.</p>
+                </div>
+
+                <div id="bank-screen-account" class="bank-screen">
+                    <h1 class="bank-title" id="account-name-title">ACCOUNT</h1>
+                    <p style="font-size: 1.2rem; margin: 0; color: #666; text-transform: uppercase; font-weight: bold;">Current Balance</p>
+                    <div class="balance-display" id="account-balance">$0.00</div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                        <button class="transaction-btn btn-withdraw" onclick="handleTransaction('withdraw')">- Withdraw</button>
+                        <button class="transaction-btn btn-deposit" onclick="handleTransaction('deposit')">+ Deposit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- 1. SECURITY PROTOCOL ---
         const SECRET_KEY = "CJ18BM20ltb";
-        
         const urlParams = new URLSearchParams(window.location.search);
         const urlKey = urlParams.get('key');
 
-        if (urlKey === SECRET_KEY) {
-            localStorage.setItem('nightingaleAuth', SECRET_KEY);
-        }
+        if (urlKey === SECRET_KEY) { localStorage.setItem('nightingaleAuth', SECRET_KEY); }
 
         if (localStorage.getItem('nightingaleAuth') === SECRET_KEY) {
             document.getElementById('auth-screen').style.display = 'none';
@@ -348,12 +381,11 @@
         // --- 2. GOOGLE SHEET DATA FETCHING (Main Map) ---
         const SHEET_ID = "1_n0RQwaGF_WxeujBq8Z04NG_ejzK71VhPa7YJE0WmM4";
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
-
         const HOME_LAT = 35.3871741;
         const HOME_LONG = -84.5345774;
 
         function haversine(lat1, lon1, lat2, lon2) {
-            const R = 3958.8; // miles
+            const R = 3958.8; 
             const toRad = deg => deg * Math.PI / 180;
             const dLat = toRad(lat2 - lat1);
             const dLon = toRad(lon2 - lon1);
@@ -410,7 +442,6 @@
                     const values = table.rows[0].c;
 
                     const row = {};
-                    // Older iPad safe check
                     headers.forEach((h, i) => row[h] = (values[i] && values[i].v) ? values[i].v : "");
 
                     const mapContainer = document.getElementById('map-container');
@@ -421,7 +452,6 @@
                     mapContainer.innerHTML = "";
                     sectorDate.innerText = "Updated: " + formatUpdated(row.updated);
 
-                    // -------- FLYING MODE --------
                     if (row.mode === "FLYING" && row.flight_id) {
                         mapContainer.style.display = 'flex';
                         sectorStatus.innerText = "In the Air";
@@ -430,13 +460,9 @@
 
                         const iframe = document.createElement("iframe");
                         iframe.src = `https://www.airnavradar.com/data/flights/${row.flight_id}`;
-                        iframe.style.width = "100%";
-                        iframe.style.height = "100%";
-                        iframe.style.border = "none";
+                        iframe.style.width = "100%"; iframe.style.height = "100%"; iframe.style.border = "none";
                         mapContainer.appendChild(iframe);
-                    } 
-                    // -------- GROUND MODE --------
-                    else if (row.mode === "GROUND" || row.mode === "Landed") {
+                    } else if (row.mode === "GROUND" || row.mode === "Landed") {
                         mapContainer.style.display = 'flex';
                         const distance = haversine(HOME_LAT, HOME_LONG, row.dad_lat, row.dad_long);
 
@@ -445,9 +471,7 @@
                         sectorStatus.style.color = "#355E3B"; 
 
                         const mapDiv = document.createElement("div");
-                        mapDiv.id = "map";
-                        mapDiv.style.width = "100%";
-                        mapDiv.style.height = "100%";
+                        mapDiv.id = "map"; mapDiv.style.width = "100%"; mapDiv.style.height = "100%";
                         mapContainer.appendChild(mapDiv);
 
                         const map = L.map('map', {zoomControl: false, attributionControl: false});
@@ -459,10 +483,8 @@
 
                         const dadHomeBounds = L.latLngBounds([[HOME_LAT, HOME_LONG], [row.dad_lat, row.dad_long]]);
                         map.fitBounds(dadHomeBounds, {padding: [40, 40], maxZoom: 7});
-                    }
-                    // -------- HOME MODE --------
-                    else if (row.mode === "HOME") {
-                        mapContainer.style.display = 'none'; // Hides the map portion cleanly
+                    } else if (row.mode === "HOME") {
+                        mapContainer.style.display = 'none'; 
                         sectorStatus.innerText = "Home";
                         sectorSub.innerText = "Safe and sound."; 
                         sectorStatus.style.color = "#333"; 
@@ -471,249 +493,263 @@
                 .catch(err => console.error("Error fetching map data:", err));
         }
 
-        loadData();
-        setInterval(loadData, 60000);
+        loadData(); setInterval(loadData, 60000);
 
         // --- 3. COUNTDOWN TIMERS FETCHING ---
         const SLEEPS_SHEET_ID = "1hTgmLdIhX1tVZbI2YB1tExCTreIAgHSqN8i31zURNkg";
         const SLEEPS_URL = `https://docs.google.com/spreadsheets/d/${SLEEPS_SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
         function calculateSleeps(targetDateStr) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const target = new Date(targetDateStr);
-            target.setHours(0, 0, 0, 0);
-            const diffTime = target - today;
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            const target = new Date(targetDateStr); target.setHours(0, 0, 0, 0);
+            return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
         }
 
         function loadSleeps() {
-            fetch(SLEEPS_URL)
-                .then(res => res.text())
-                .then(text => {
-                    const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
-                    const table = JSON.parse(jsonText).table;
-                    const rows = table.rows;
+            fetch(SLEEPS_URL).then(res => res.text()).then(text => {
+                const jsonText = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1];
+                const table = JSON.parse(jsonText).table;
+                const container = document.getElementById('sleeps-list-container');
+                container.innerHTML = ""; 
 
-                    const container = document.getElementById('sleeps-list-container');
-                    container.innerHTML = ""; 
+                table.rows.forEach(row => {
+                    const eventName = (row.c[0] && row.c[0].v) ? row.c[0].v : "";
+                    const dateValue = (row.c[1]) ? (row.c[1].f || row.c[1].v) : null;
 
-                    rows.forEach(row => {
-                        const eventName = (row.c[0] && row.c[0].v) ? row.c[0].v : "";
-                        const dateValue = (row.c[1]) ? (row.c[1].f || row.c[1].v) : null;
-
-                        if (eventName && dateValue) {
-                            let parsedDate = null;
-                            
-                            if (typeof dateValue === 'string' && dateValue.startsWith('Date')) {
-                                let parts = dateValue.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
-                                if (parts) {
-                                    parsedDate = new Date(parts[1], parts[2], parts[3]);
+                    if (eventName && dateValue) {
+                        let parsedDate = null;
+                        if (typeof dateValue === 'string' && dateValue.startsWith('Date')) {
+                            let parts = dateValue.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
+                            if (parts) parsedDate = new Date(parts[1], parts[2], parts[3]);
+                        } else if (typeof dateValue === 'number') {
+                            parsedDate = convertSerialDate(dateValue);
+                        } else { parsedDate = new Date(dateValue); }
+                        
+                        if (parsedDate && !isNaN(parsedDate)) {
+                            const sleeps = calculateSleeps(parsedDate);
+                            if (sleeps >= 0) {
+                                const li = document.createElement('li');
+                                if (sleeps === 0) {
+                                    li.classList.add('today-row');
+                                    li.innerHTML = `<span class="event-name">${eventName}</span><span class="sleep-number today-text">TODAY! 🎉</span>`;
+                                } else {
+                                    li.innerHTML = `<span class="event-name">${eventName}</span><span class="sleep-number">${sleeps}</span>`;
                                 }
-                            } else if (typeof dateValue === 'number') {
-                                parsedDate = convertSerialDate(dateValue);
-                            } else {
-                                parsedDate = new Date(dateValue);
-                            }
-                            
-                            if (parsedDate && !isNaN(parsedDate)) {
-                                const sleeps = calculateSleeps(parsedDate);
-                                
-                                if (sleeps >= 0) {
-                                    const li = document.createElement('li');
-                                    
-                                    // Today Logic
-                                    if (sleeps === 0) {
-                                        li.classList.add('today-row');
-                                        li.innerHTML = `<span class="event-name">${eventName}</span> 
-                                                        <span class="sleep-number today-text">TODAY! 🎉</span>`;
-                                    } else {
-                                        li.innerHTML = `<span class="event-name">${eventName}</span> 
-                                                        <span class="sleep-number">${sleeps}</span>`;
-                                    }
-                                    container.appendChild(li);
-                                }
+                                container.appendChild(li);
                             }
                         }
-                    });
-                    
-                    if (container.innerHTML === "") {
-                        container.innerHTML = '<li><span class="event-name">No upcoming events</span></li>';
                     }
-                })
-                .catch(err => {
-                    console.error("Error fetching sleeps data:", err);
-                    document.getElementById('sleeps-list-container').innerHTML = 
-                        '<li><span class="event-name" style="color:red; font-size:0.9rem;">Connection error. Is the sheet Published to the Web?</span></li>';
                 });
+                if (container.innerHTML === "") container.innerHTML = '<li><span class="event-name">No upcoming events</span></li>';
+            }).catch(err => { document.getElementById('sleeps-list-container').innerHTML = '<li><span class="event-name" style="color:red;">Connection error.</span></li>'; });
         }
 
-        loadSleeps();
-        setInterval(loadSleeps, 3600000);
+        loadSleeps(); setInterval(loadSleeps, 3600000);
 
         // --- 4. MESSAGE BOARD & PUSH NOTIFICATIONS ---
         const MESSAGE_CSV_URL = `https://docs.google.com/spreadsheets/d/1ALWIcL9eQV7SEoXm0xoP9lz_1XfhtLmJAUZtm4Pn6ig/gviz/tq?tqx=out:csv&headers=0`;
         const NTFY_TOPIC = "dad_trackeralertsnotify__44";
 
         function loadMessage() {
-            fetch(MESSAGE_CSV_URL)
-                .then(res => res.text())
-                .then(text => {
-                    const cleanMessage = text.replace(/^"|"$/g, '').trim();
-                    const msgElement = document.getElementById('message-text');
-                    const storedMessage = localStorage.getItem('dashboardMessage');
-                    const btnContainer = document.querySelector('.btn-container');
+            fetch(MESSAGE_CSV_URL).then(res => res.text()).then(text => {
+                const cleanMessage = text.replace(/^"|"$/g, '').trim();
+                const msgElement = document.getElementById('message-text');
+                const storedMessage = localStorage.getItem('dashboardMessage');
+                const btnContainer = document.querySelector('.btn-container');
+                const btnCarter = document.getElementById('btn-carter');
+                const btnBarrett = document.getElementById('btn-barrett');
 
-                    const btnCarter = document.getElementById('btn-carter');
-                    const btnBarrett = document.getElementById('btn-barrett');
+                function resetButtons() {
+                    btnCarter.classList.remove('seen'); btnCarter.innerText = 'Carter'; localStorage.setItem('carterSeen', 'false');
+                    btnBarrett.classList.remove('seen'); btnBarrett.innerText = 'Barrett'; localStorage.setItem('barrettSeen', 'false');
+                }
+                function restoreButtons() {
+                    if (localStorage.getItem('carterSeen') === 'true') { btnCarter.classList.add('seen'); btnCarter.innerText = '✔ Carter'; }
+                    if (localStorage.getItem('barrettSeen') === 'true') { btnBarrett.classList.add('seen'); btnBarrett.innerText = '✔ Barrett'; }
+                }
 
-                    function resetButtons() {
-                        btnCarter.classList.remove('seen');
-                        btnCarter.innerText = 'Carter';
-                        localStorage.setItem('carterSeen', 'false');
-
-                        btnBarrett.classList.remove('seen');
-                        btnBarrett.innerText = 'Barrett';
-                        localStorage.setItem('barrettSeen', 'false');
-                    }
-
-                    function restoreButtons() {
-                        if (localStorage.getItem('carterSeen') === 'true') {
-                            btnCarter.classList.add('seen');
-                            btnCarter.innerText = '✔ Carter';
-                        }
-                        if (localStorage.getItem('barrettSeen') === 'true') {
-                            btnBarrett.classList.add('seen');
-                            btnBarrett.innerText = '✔ Barrett';
-                        }
-                    }
-
-                    if (cleanMessage !== storedMessage && cleanMessage !== "") {
-                        msgElement.innerText = cleanMessage;
-                        btnContainer.style.display = 'flex';
-                        localStorage.setItem('dashboardMessage', cleanMessage);
-                        resetButtons(); 
-                    } 
-                    else if (cleanMessage === storedMessage && cleanMessage !== "") {
-                        msgElement.innerText = cleanMessage;
-                        btnContainer.style.display = 'flex';
-                        restoreButtons(); 
-                    } 
-                    else if (cleanMessage === "") {
-                        msgElement.innerText = "No new messages...";
-                        btnContainer.style.display = 'none';
-                        if (storedMessage !== "") {
-                            localStorage.setItem('dashboardMessage', "");
-                            resetButtons();
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.error("Error fetching message:", err);
-                    document.getElementById('message-text').innerText = "No new messages...";
-                    document.querySelector('.btn-container').style.display = 'none';
-                });
+                if (cleanMessage !== storedMessage && cleanMessage !== "") {
+                    msgElement.innerText = cleanMessage; btnContainer.style.display = 'flex'; localStorage.setItem('dashboardMessage', cleanMessage); resetButtons(); 
+                } else if (cleanMessage === storedMessage && cleanMessage !== "") {
+                    msgElement.innerText = cleanMessage; btnContainer.style.display = 'flex'; restoreButtons(); 
+                } else if (cleanMessage === "") {
+                    msgElement.innerText = "No new messages..."; btnContainer.style.display = 'none';
+                    if (storedMessage !== "") { localStorage.setItem('dashboardMessage', ""); resetButtons(); }
+                }
+            }).catch(err => {
+                document.getElementById('message-text').innerText = "No new messages..."; document.querySelector('.btn-container').style.display = 'none';
+            });
         }
 
-        // Updated Push Function
         function notifyDad(sonName, customAction) {
             const actionText = customAction || "just read your message on the dashboard!";
-            fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
-                method: 'POST',
-                body: `${sonName} ${actionText}`,
-                headers: {
-                    'Title': 'Dad Tracker Alert',
-                    'Tags': 'airplane' 
-                }
-            }).catch(err => console.error("Error sending notification:", err));
+            fetch(`https://ntfy.sh/${NTFY_TOPIC}`, { method: 'POST', body: `${sonName} ${actionText}`, headers: { 'Title': 'Dad Tracker Alert', 'Tags': 'airplane' } });
         }
 
-        // Dashboard Ack Buttons
         document.getElementById('btn-carter').addEventListener('click', function() {
-            if (!this.classList.contains('seen')) {
-                this.classList.add('seen');
-                this.innerText = '✔ Carter';
-                localStorage.setItem('carterSeen', 'true');
-                notifyDad('Carter');
-            }
+            if (!this.classList.contains('seen')) { this.classList.add('seen'); this.innerText = '✔ Carter'; localStorage.setItem('carterSeen', 'true'); notifyDad('Carter'); }
         });
-        
         document.getElementById('btn-barrett').addEventListener('click', function() {
-            if (!this.classList.contains('seen')) {
-                this.classList.add('seen');
-                this.innerText = '✔ Barrett';
-                localStorage.setItem('barrettSeen', 'true');
-                notifyDad('Barrett');
-            }
+            if (!this.classList.contains('seen')) { this.classList.add('seen'); this.innerText = '✔ Barrett'; localStorage.setItem('barrettSeen', 'true'); notifyDad('Barrett'); }
         });
 
-        // Toggle Send Message View
-        document.getElementById('btn-open-send').addEventListener('click', function() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('send-view').style.display = 'block';
-        });
-
-        document.getElementById('btn-cancel-send').addEventListener('click', function() {
-            document.getElementById('send-view').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-        });
-
-        // The Custom Message Buttons
         document.querySelectorAll('.push-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                const son = this.getAttribute('data-son');
-                const msg = this.getAttribute('data-msg');
-
-                notifyDad(son, `says: "${msg}"`);
-
-                const originalText = this.innerText;
-                const originalBg = this.style.backgroundColor;
-                const originalColor = this.style.color;
-
-                this.innerText = '✔ Sent!';
-                this.style.backgroundColor = '#4CAF50';
-                this.style.color = 'white';
-
-                setTimeout(function() {
-                    btn.innerText = originalText;
-                    btn.style.backgroundColor = originalBg;
-                    btn.style.color = originalColor;
-                    
-                    document.getElementById('send-view').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                }, 2000);
+                const son = this.getAttribute('data-son'); const msg = this.getAttribute('data-msg'); notifyDad(son, `says: "${msg}"`);
+                const originalText = this.innerText; const originalBg = this.style.backgroundColor; const originalColor = this.style.color;
+                this.innerText = '✔ Sent!'; this.style.backgroundColor = '#4CAF50'; this.style.color = 'white';
+                setTimeout(function() { btn.innerText = originalText; btn.style.backgroundColor = originalBg; btn.style.color = originalColor; document.getElementById('send-view').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; }, 2000);
             });
         });
 
-        loadMessage();
-        setInterval(loadMessage, 60000);
+        loadMessage(); setInterval(loadMessage, 60000);
 
         // --- 5. POSTCARD AUTO-PULL ---
         const POSTCARD_WEB_APP = "https://script.google.com/macros/s/AKfycbwGK-qpY-f36QDunT-n7cJhJQnjyOC_wCof_eHH7If2tGRrwe9dcnk-euAQa3GmX1MQoQ/exec";
 
         function loadPostcard() {
-            fetch(POSTCARD_WEB_APP)
-                .then(res => res.text())
-                .then(fileId => {
-                    const imgElement = document.getElementById('postcard-img');
-                    const placeholder = document.getElementById('postcard-placeholder');
-                    const currentId = localStorage.getItem('postcardId');
+            fetch(POSTCARD_WEB_APP).then(res => res.text()).then(fileId => {
+                const imgElement = document.getElementById('postcard-img');
+                const placeholder = document.getElementById('postcard-placeholder');
+                const currentId = localStorage.getItem('postcardId');
 
-                    if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.getAttribute('src') === "")) {
-                        imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
-                        imgElement.onload = function() {
-                            imgElement.style.display = 'block';
-                            placeholder.style.display = 'none';
-                        };
-                        localStorage.setItem('postcardId', fileId);
-                    }
-                })
-                .catch(err => console.error("Error fetching postcard:", err));
+                if (fileId !== "NO_FILES" && (fileId !== currentId || imgElement.getAttribute('src') === "")) {
+                    imgElement.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+                    imgElement.onload = function() { imgElement.style.display = 'block'; placeholder.style.display = 'none'; };
+                    localStorage.setItem('postcardId', fileId);
+                }
+            }).catch(err => console.error("Error fetching postcard:", err));
         }
 
-        loadPostcard();
-        setInterval(loadPostcard, 60000);
+        loadPostcard(); setInterval(loadPostcard, 60000);
+
+        // --- 6. OVERLAY NAVIGATION LOGIC ---
+        document.getElementById('btn-open-send').addEventListener('click', function() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('send-view').style.display = 'block';
+        });
+
+        // Universal Back Buttons for Overlays
+        document.querySelectorAll('.btn-close-overlay').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.overlay-view').forEach(view => view.style.display = 'none');
+                document.getElementById('dashboard').style.display = 'block';
+            });
+        });
+
+        // --- 7. THE CLOUD BANK LOGIC ---
         
+        // PASTE YOUR NEW APPS SCRIPT WEB APP URL HERE:
+        const BANK_WEB_APP_URL = "YOUR_NEW_APPS_SCRIPT_URL_HERE";
+        
+        // ** YOU CAN CHANGE THEIR PIN CODES RIGHT HERE **
+        const PIN_CODES = {
+            'Carter': '0412',
+            'Barrett': '0711'
+        };
+
+        let currentBankUser = '';
+        let cloudBalances = { 'Carter': 0.00, 'Barrett': 0.00 };
+
+        // Fetch balances quietly in the background when the dashboard loads
+        function fetchCloudBalances() {
+            if(BANK_WEB_APP_URL === "YOUR_NEW_APPS_SCRIPT_URL_HERE") return; 
+            
+            // We add a timestamp to the URL so the iPad doesn't accidentally use a cached version
+            fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime())
+                .then(res => res.json())
+                .then(data => { cloudBalances = data; })
+                .catch(err => console.log("Bank sync error", err));
+        }
+        
+        // Run once immediately, then check for new balances every minute
+        fetchCloudBalances();
+        setInterval(fetchCloudBalances, 60000); 
+
+        // Open the Vault
+        document.getElementById('btn-bank').addEventListener('click', function() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('bank-view').style.display = 'block';
+            showBankScreen('bank-screen-select');
+        });
+
+        function showBankScreen(screenId) {
+            document.querySelectorAll('.bank-screen').forEach(s => s.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        // When a name is tapped
+        function selectBankUser(name) {
+            currentBankUser = name;
+            document.getElementById('pin-prompt-name').innerText = `Hello, ${name}.`;
+            document.getElementById('pin-input').value = ''; 
+            document.getElementById('pin-error').style.display = 'none';
+            showBankScreen('bank-screen-pin');
+        }
+
+        // When they hit UNLOCK
+        function checkPin() {
+            const enteredPin = document.getElementById('pin-input').value;
+            const correctPin = PIN_CODES[currentBankUser];
+
+            if (enteredPin === correctPin) {
+                document.getElementById('account-name-title').innerText = `${currentBankUser}'S VAULT`;
+                updateBalanceDisplay();
+                showBankScreen('bank-screen-account');
+            } else {
+                document.getElementById('pin-error').style.display = 'block';
+                document.getElementById('pin-input').value = '';
+            }
+        }
+
+        // Format and show the balance from the Cloud
+        function updateBalanceDisplay() {
+            const currentBal = cloudBalances[currentBankUser];
+            document.getElementById('account-balance').innerText = `$${currentBal.toFixed(2)}`;
+        }
+
+        // Handle Deposit / Withdraw
+        function handleTransaction(type) {
+            const verb = type === 'deposit' ? 'deposit' : 'withdraw';
+            const amountStr = prompt(`How much cash do you want to ${verb}?\n(Example: 5.00)`);
+            
+            if (amountStr === null || amountStr === "") return;
+
+            const amount = parseFloat(amountStr);
+            if (isNaN(amount) || amount <= 0) {
+                alert("Oops! Please enter a valid number.");
+                return;
+            }
+
+            let currentBal = cloudBalances[currentBankUser];
+
+            if (type === 'deposit') {
+                currentBal += amount;
+            } else if (type === 'withdraw') {
+                if (amount > currentBal) {
+                    alert("Insufficient funds! You can't withdraw more than you have.");
+                    return;
+                }
+                currentBal -= amount;
+            }
+
+            // Visual feedback so they know it's saving to the cloud
+            document.getElementById('account-balance').innerText = "Syncing...";
+
+            // Send the new math to Google Sheets
+            fetch(BANK_WEB_APP_URL + `?action=update&name=${currentBankUser}&balance=${currentBal}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        cloudBalances[currentBankUser] = data.balance;
+                        updateBalanceDisplay();
+                    }
+                })
+                .catch(err => {
+                    alert("Network error. Could not reach the bank!");
+                    updateBalanceDisplay(); // Reset text if it failed
+                });
+        }
     </script>
 </body>
 </html>
