@@ -640,7 +640,7 @@
         // --- 7. THE CLOUD BANK LOGIC ---
         
         // PASTE YOUR NEW APPS SCRIPT WEB APP URL HERE:
-        const BANK_WEB_APP_URL = "YOUR_NEW_APPS_SCRIPT_URL_HERE";
+        const BANK_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwIfp2F0KvqZ15LYEDmYi4nsDP13LpQJnZIx4fSlYbHv-hkpxs5d1ujxVDulphXYJ-n/exec";
         
         // ** YOU CAN CHANGE THEIR PIN CODES RIGHT HERE **
         const PIN_CODES = {
@@ -653,7 +653,7 @@
 
         // Fetch balances quietly in the background when the dashboard loads
         function fetchCloudBalances() {
-            if(BANK_WEB_APP_URL === "YOUR_NEW_APPS_SCRIPT_URL_HERE") return; 
+            if(BANK_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwIfp2F0KvqZ15LYEDmYi4nsDP13LpQJnZIx4fSlYbHv-hkpxs5d1ujxVDulphXYJ-n/exec") return; 
             
             // We add a timestamp to the URL so the iPad doesn't accidentally use a cached version
             fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime())
