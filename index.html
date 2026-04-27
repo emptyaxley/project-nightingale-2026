@@ -122,7 +122,7 @@
                 <div class="polaroid">
                     <img id="postcard-img" src="" style="display: none;" />
                     <div id="postcard-placeholder" style="display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif;">Awaiting Photo...</div> 
-                    <p style="margin-top: 10px;">Wish you were here!</p>
+                    <p id="postcard-caption" style="margin-top: 10px;">Wish you were here!</p>
                 </div>
             </div>
         </div>
@@ -282,13 +282,29 @@
         
         function loadMessage() {
             fetch(MESSAGE_CSV_URL).then(res => res.text()).then(text => {
-                const cm = text.replace(/^"|"$/g, '').trim(), sm = localStorage.getItem('dashboardMessage'), bc = document.querySelector('.btn-container');
+                // Split the CSV into separate rows and clean up any quotes
+                const rows = text.split(/\r?\n/).map(row => row.replace(/^"|"$/g, '').replace(/""/g, '"').trim());
+                
+                // Row 1 (A1) is the Main Message, Row 2 (A2) is the Caption
+                const cm = rows[0] || ""; 
+                const cp = rows[1] || "Wish you were here!"; 
+                
+                // Update the polaroid caption instantly
+                document.getElementById('postcard-caption').innerText = cp;
+
+                const sm = localStorage.getItem('dashboardMessage');
+                const bc = document.querySelector('.btn-container');
+                
                 const rb = () => { ['carter','barrett'].forEach(n => { const b = document.getElementById(`btn-${n}`); b.classList.remove('seen'); b.innerText = n.charAt(0).toUpperCase()+n.slice(1); localStorage.setItem(`${n}Seen`,'false'); }); }
                 const resb = () => { ['carter','barrett'].forEach(n => { if(localStorage.getItem(`${n}Seen`)==='true'){ const b=document.getElementById(`btn-${n}`); b.classList.add('seen'); b.innerText = '✔ '+n.charAt(0).toUpperCase()+n.slice(1); } }); }
+                
                 if (cm !== sm && cm !== "") { document.getElementById('message-text').innerText = cm; bc.style.display = 'flex'; localStorage.setItem('dashboardMessage', cm); rb(); } 
                 else if (cm === sm && cm !== "") { document.getElementById('message-text').innerText = cm; bc.style.display = 'flex'; resb(); } 
                 else if (cm === "") { document.getElementById('message-text').innerText = "No new messages..."; bc.style.display = 'none'; if (sm !== "") { localStorage.setItem('dashboardMessage', ""); rb(); } }
-            }).catch(e => { document.getElementById('message-text').innerText = "No new messages..."; document.querySelector('.btn-container').style.display = 'none'; });
+            }).catch(e => { 
+                document.getElementById('message-text').innerText = "No new messages..."; 
+                document.querySelector('.btn-container').style.display = 'none'; 
+            });
         }
         ['carter','barrett'].forEach(n => { document.getElementById(`btn-${n}`).addEventListener('click', function() { if(!this.classList.contains('seen')){ this.classList.add('seen'); this.innerText = '✔ '+n.charAt(0).toUpperCase()+n.slice(1); localStorage.setItem(`${n}Seen`, 'true'); notifyDad(n.charAt(0).toUpperCase()+n.slice(1)); } }); });
         document.querySelectorAll('.push-btn').forEach(b => { b.addEventListener('click', function() { notifyDad(this.getAttribute('data-son'), `says: "${this.getAttribute('data-msg')}"`); const ot=this.innerText,obg=this.style.backgroundColor,oc=this.style.color; this.innerText='✔ Sent!'; this.style.backgroundColor='#4CAF50'; this.style.color='white'; setTimeout(()=>{ this.innerText=ot;this.style.backgroundColor=obg;this.style.color=oc; document.getElementById('send-view').style.display='none'; document.getElementById('dashboard').style.display='block'; }, 2000); }); });
