@@ -646,8 +646,8 @@
         
         // ** YOU CAN CHANGE THEIR PIN CODES RIGHT HERE **
         const PIN_CODES = {
-            'CARTER': '0412',
-            'BARRETT': '0711'
+            'Carter': '0412',
+            'Barrett': '0711'
         };
 
         let currentBankUser = '';
@@ -680,7 +680,8 @@
         // When a name is tapped
         function selectBankUser(name) {
             currentBankUser = name;
-            document.getElementById('pin-prompt-name').innerText = `Hello, ${name}.`;
+            // .toUpperCase() makes it "HELLO, CARTER." on the screen!
+            document.getElementById('pin-prompt-name').innerText = `HELLO, ${name.toUpperCase()}.`;
             document.getElementById('pin-input').value = ''; 
             document.getElementById('pin-error').style.display = 'none';
             showBankScreen('bank-screen-pin');
@@ -692,7 +693,8 @@
             const correctPin = PIN_CODES[currentBankUser];
 
             if (enteredPin === correctPin) {
-                document.getElementById('account-name-title').innerText = `${currentBankUser}'S VAULT`;
+                // .toUpperCase() makes it "CARTER'S VAULT" on the screen!
+                document.getElementById('account-name-title').innerText = `${currentBankUser.toUpperCase()}'S VAULT`;
                 updateBalanceDisplay();
                 showBankScreen('bank-screen-account');
             } else {
@@ -700,7 +702,6 @@
                 document.getElementById('pin-input').value = '';
             }
         }
-
         // Format and show the balance from the Cloud
         function updateBalanceDisplay() {
             const currentBal = cloudBalances[currentBankUser];
