@@ -159,8 +159,18 @@
                 <div id="bank-screen-select" class="bank-screen" style="display: block;">
                     <h1 class="bank-title">AXLEY VAULT</h1>
                     <p style="font-size: 1.2rem; margin-bottom: 30px;">Select your account:</p>
-                    <button class="bank-user-btn" onclick="selectBankUser('Carter')">Carter</button>
-                    <button class="bank-user-btn" onclick="selectBankUser('Barrett')">Barrett</button>
+                    <button class="bank-user-btn" onclick="selectBankUser('Carter')">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Carter</span>
+        <span id="preview-balance-carter" style="color: #666; font-size: 1.2rem;">$0.00</span>
+    </div>
+</button>
+<button class="bank-user-btn" onclick="selectBankUser('Barrett')">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Barrett</span>
+        <span id="preview-balance-barrett" style="color: #666; font-size: 1.2rem;">$0.00</span>
+    </div>
+</button>
                 </div>
 
                 <div id="bank-screen-pin" class="bank-screen">
