@@ -341,14 +341,24 @@
         let cloudData = { balances: { 'Carter': 0.00, 'Barrett': 0.00 }, ledger: [] };
 
         // Fetch both balances AND the ledger history
-        function fetchCloudData() {
-            if(BANK_WEB_APP_URL === "YOUR_NEW_APPS_SCRIPT_URL_HERE") return;
-            fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime(), { redirect: 'follow' })
-                .then(res => res.json())
-                .then(data => { cloudData = data; })
-                .catch(err => console.log("Bank sync error", err));
-        }
-        fetchCloudData(); setInterval(fetchCloudData, 60000); 
+        // Function to update the front-screen balances
+function updatePreviewBalances() {
+    document.getElementById('preview-balance-carter').innerText = `$${cloudData.balances['Carter'].toFixed(2)}`;
+    document.getElementById('preview-balance-barrett').innerText = `$${cloudData.balances['Barrett'].toFixed(2)}`;
+}
+
+// Fetch both balances AND the ledger history
+function fetchCloudData() {
+    if(BANK_WEB_APP_URL === "YOUR_NEW_APPS_SCRIPT_URL_HERE") return;
+    fetch(BANK_WEB_APP_URL + "?action=read&t=" + new Date().getTime(), { redirect: 'follow' })
+        .then(res => res.json())
+        .then(data => { 
+            cloudData = data; 
+            updatePreviewBalances(); // Instantly update the front screen!
+        })
+        .catch(err => console.log("Bank sync error", err));
+}
+fetchCloudData(); setInterval(fetchCloudData, 60000);
 
         document.getElementById('btn-bank').addEventListener('click', () => {
             document.getElementById('dashboard').style.display = 'none';
@@ -461,6 +471,7 @@
                         
                         // 4. Update the screen immediately—no waiting for Google!
                         updateDisplay();
+                        updatePreviewBalances();
                     }
                 })
                 .catch(err => {
